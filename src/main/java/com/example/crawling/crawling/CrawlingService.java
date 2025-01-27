@@ -15,7 +15,11 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import java.time.Duration;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 @Slf4j
@@ -28,15 +32,14 @@ public class CrawlingService {
 
     public void getDataList(WebDriver driver) {
 
-        try {
-            matchScheduleRepository.deleteAll();
-            log.info("일정 데이터 삭제 성공");
-        } catch (CustomException e) {
-            log.info("데이터 삭제 실패");
-            throw new CustomException(HttpStatus.BAD_REQUEST, ErrorCode.FAIL_TO_DELETE_SCHEDULE_DATA);
-        }
+        LocalDate currentDate = LocalDate.now();
+        String formattedDate = currentDate.format(DateTimeFormatter.ofPattern("yyyy-MM"));
+        int month = Integer.parseInt(currentDate.format(DateTimeFormatter.ofPattern("MM")));
+        log.info(formattedDate);
 
-        driver.get("https://game.naver.com/esports/League_of_Legends/schedule/lck");
+        deleteMatchScheduleByMonth(month);
+
+        driver.get("https://game.naver.com/esports/League_of_Legends/schedule/lck?date=" + formattedDate);
 
         WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(100));
 
@@ -98,7 +101,7 @@ public class CrawlingService {
 
             try {
                 MatchScheduleDto scheduleDto = MatchScheduleDto.builder()
-                        .month(1)
+                        .month(month)
                         .matchDate(scheduleData.date())
                         .startTime(scheduleData.startTime())
                         .team1(scheduleData.team1())
@@ -122,13 +125,7 @@ public class CrawlingService {
 
     public void getRankingData(WebDriver driver) {
 
-        try {
-            rankRepository.deleteAll();
-            log.info("순위 데이터 삭제 성공");
-        } catch (CustomException e) {
-            log.info("순위 데이터 삭제 실패");
-            throw new CustomException(HttpStatus.BAD_REQUEST, ErrorCode.FAIL_TO_DELETE_RANKING_DATA);
-        }
+        deleteRanking();
 
         driver.get("https://game.naver.com/esports/League_of_Legends/record/lck/team/lck_2024_summer");
         WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(100));
@@ -184,6 +181,28 @@ public class CrawlingService {
                 log.info("순위 일정 DB 저장 실패");
                 throw new CustomException(HttpStatus.BAD_REQUEST, ErrorCode.FAIL_TO_STORE_RANKING_DATA);
             }
+        }
+    }
+
+    @Transactional
+    public void deleteMatchScheduleByMonth(int month) {
+        try {
+            matchScheduleRepository.deleteByMonth(month);
+            log.info(month + "월 일정 데이터 삭제 성공");
+        } catch (Exception e) {
+            log.info(month + "월 일정 데이터 삭제 실패");
+            throw new CustomException(HttpStatus.BAD_REQUEST, ErrorCode.FAIL_TO_DELETE_SCHEDULE_DATA);
+        }
+    }
+
+    @Transactional
+    public void deleteRanking() {
+        try {
+            rankRepository.deleteAll();
+            log.info("순위 데이터 삭제 성공");
+        } catch (CustomException e) {
+            log.info("순위 데이터 삭제 실패");
+            throw new CustomException(HttpStatus.BAD_REQUEST, ErrorCode.FAIL_TO_DELETE_RANKING_DATA);
         }
     }
 }
