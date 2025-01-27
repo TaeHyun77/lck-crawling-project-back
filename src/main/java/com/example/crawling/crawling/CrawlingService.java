@@ -114,9 +114,9 @@ public class CrawlingService {
                         .build();
 
                 matchScheduleRepository.save(scheduleDto.toEntity());
-                log.info("경기 일정 DB 저장 완료");
+                log.info("경기 일정 DB 저장 완료 !");
             } catch (CustomException e) {
-                log.info("경기 일정 DB 저장 실패");
+                log.info("경기 일정 DB 저장 실패 !");
                 throw new CustomException(HttpStatus.BAD_REQUEST, ErrorCode.FAIL_TO_STORE_SCHEDULE_DATA);
             }
 
@@ -176,9 +176,9 @@ public class CrawlingService {
                         .build();
 
                 rankRepository.save(rankData.toRankEntity());
-                log.info("순위 DB 저장 성공");
+                log.info("순위 DB 저장 성공 !");
             } catch (CustomException e) {
-                log.info("순위 일정 DB 저장 실패");
+                log.info("순위 일정 DB 저장 실패 !");
                 throw new CustomException(HttpStatus.BAD_REQUEST, ErrorCode.FAIL_TO_STORE_RANKING_DATA);
             }
         }
@@ -188,9 +188,9 @@ public class CrawlingService {
     public void deleteMatchScheduleByMonth(int month) {
         try {
             matchScheduleRepository.deleteByMonth(month);
-            log.info(month + "월 일정 데이터 삭제 성공");
+            log.info(month + "월 일정 데이터 삭제 성공 !");
         } catch (Exception e) {
-            log.info(month + "월 일정 데이터 삭제 실패");
+            log.info(month + "월 일정 데이터 삭제 실패 !");
             throw new CustomException(HttpStatus.BAD_REQUEST, ErrorCode.FAIL_TO_DELETE_SCHEDULE_DATA);
         }
     }
@@ -199,9 +199,9 @@ public class CrawlingService {
     public void deleteRanking() {
         try {
             rankRepository.deleteAll();
-            log.info("순위 데이터 삭제 성공");
+            log.info("순위 데이터 삭제 성공 !");
         } catch (CustomException e) {
-            log.info("순위 데이터 삭제 실패");
+            log.info("순위 데이터 삭제 실패 !");
             throw new CustomException(HttpStatus.BAD_REQUEST, ErrorCode.FAIL_TO_DELETE_RANKING_DATA);
         }
     }
