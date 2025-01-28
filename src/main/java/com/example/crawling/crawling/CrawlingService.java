@@ -73,86 +73,93 @@ public class CrawlingService {
         WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(100));
         wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector(".schedule_container__2rbMY")));
 
-        List<WebElement> teamElements = driver.findElements(By.cssSelector(".row_item__dbJjy"));
+        // 특정 날짜의 경기 목록 일정
+        List<WebElement> elements = driver.findElements(By.cssSelector(".card_item__3Covz"));
 
-        for (int i = 0; i < teamElements.size(); i++) {
+        for (int i = 0; i < elements.size(); i++) {
 
             // 경기 날짜
-            List<WebElement> dateInfo = driver.findElements(By.cssSelector(".card_date__1kdC3"));
-            String date = dateInfo.get(i/2).getText().replace("오늘", "");
+            WebElement dateInfo = elements.get(i).findElement(By.cssSelector(".card_date__1kdC3"));
+            String date = dateInfo.getText();
 
-            // 각 경기 별 일정 크롤링
-            teamElements = driver.findElements(By.cssSelector(".row_item__dbJjy"));
-            WebElement team = teamElements.get(i);
+            // 각각의 경기 목록
+            List<WebElement> scheduleElements = elements.get(i).findElements(By.cssSelector(".row_item__dbJjy"));
 
-            // 시작 시간
-            WebElement timeElements = team.findElement(By.cssSelector(".row_time__28bwr"));
-            String startTime = timeElements.getText();
+            for (int j = 0; j < scheduleElements.size(); j++) {
 
-            // 경기 결과 상태
-            WebElement matchStatusElements = team.findElement(By.cssSelector(".row_state__2RKDU"));
-            String matchStatus = matchStatusElements.getText();
+                // 시작 시간
+                WebElement timeElements = scheduleElements.get(j).findElement(By.cssSelector(".row_time__28bwr"));
+                String startTime = timeElements.getText();
 
-            // 팀 이름
-            WebElement teamElement = team.findElement(By.cssSelector(".row_box_score__1WQuz"));
-            List<WebElement> teamNameElements = teamElement.findElements(By.cssSelector(".row_name__IDFHz"));
-            String team1 = teamNameElements.get(0).getText();
-            String team2 = teamNameElements.get(1).getText();
+                // 경기 결과 상태
+                WebElement matchStatusElements = scheduleElements.get(j).findElement(By.cssSelector(".row_state__2RKDU"));
+                String matchStatus = matchStatusElements.getText();
 
-            // 점수
-            String teamScore1 = "none";
-            String teamScore2 = "none";
+                WebElement stageTypeElements = scheduleElements.get(j).findElement(By.cssSelector(".row_title__1sdwN"));
+                String stageType = stageTypeElements.getText();
 
-            if (!matchStatus.equals("예정")) {
-                WebElement scoreElement = team.findElement(By.cssSelector(".row_box_score__1WQuz"));
-                List<WebElement> numberElements = scoreElement.findElements(By.cssSelector(".row_score__2RmGQ"));
-                teamScore1 = numberElements.get(0).getText();
-                teamScore2 = numberElements.get(1).getText();
+                // 팀 이름
+                WebElement teamElement = scheduleElements.get(j).findElement(By.cssSelector(".row_box_score__1WQuz"));
+                List<WebElement> teamNameElements = teamElement.findElements(By.cssSelector(".row_name__IDFHz"));
+                String team1 = teamNameElements.get(0).getText();
+                String team2 = teamNameElements.get(1).getText();
+
+                // 점수
+                String teamScore1 = "none";
+                String teamScore2 = "none";
+
+                if (!matchStatus.equals("예정")) {
+                    WebElement scoreElement = scheduleElements.get(j).findElement(By.cssSelector(".row_box_score__1WQuz"));
+                    List<WebElement> numberElements = scoreElement.findElements(By.cssSelector(".row_score__2RmGQ"));
+                    teamScore1 = numberElements.get(0).getText();
+                    teamScore2 = numberElements.get(1).getText();
+                }
+
+                // 이미지
+                List<WebElement> imageElements = scheduleElements.get(j).findElements(By.cssSelector(".row_box_score__1WQuz img"));
+                String teamImg1 = null;
+                String teamImg2 = null;
+
+                if (imageElements != null && imageElements.size() >= 2) {
+                    teamImg1 = imageElements.get(0).getAttribute("src");
+                    teamImg2 = imageElements.get(1).getAttribute("src");
+                }
+
+                ScheduleData scheduleData = new ScheduleData(
+                        date,
+                        startTime,
+                        matchStatus,
+                        stageType,
+                        team1,
+                        team2,
+                        teamImg1,
+                        teamImg2
+                );
+
+                log.info("scheduleData : " + scheduleData);
+
+                try {
+                    MatchScheduleDto scheduleDto = MatchScheduleDto.builder()
+                            .month(month)
+                            .matchDate(scheduleData.date())
+                            .startTime(scheduleData.startTime())
+                            .team1(scheduleData.team1())
+                            .team2(scheduleData.team2())
+                            .matchStatus(scheduleData.matchStatus())
+                            .stageType(stageType)
+                            .teamScore1(teamScore1)
+                            .teamScore2(teamScore2)
+                            .teamImg1(scheduleData.teamImg1())
+                            .teamImg2(scheduleData.teamImg2())
+                            .build();
+
+                    matchScheduleRepository.save(scheduleDto.toEntity());
+                    log.info("경기 일정 DB 저장 완료 !");
+                } catch (CustomException e) {
+                    log.info("경기 일정 DB 저장 실패 !");
+                    throw new CustomException(HttpStatus.BAD_REQUEST, ErrorCode.FAIL_TO_STORE_SCHEDULE_DATA);
+                }
             }
-
-            // 이미지
-            List<WebElement> imageElements = team.findElements(By.cssSelector(".row_box_score__1WQuz img"));
-            String teamImg1 = null;
-            String teamImg2 = null;
-
-            if (imageElements != null && imageElements.size() >= 2) {
-                teamImg1 = imageElements.get(0).getAttribute("src");
-                teamImg2 = imageElements.get(1).getAttribute("src");
-            }
-
-            ScheduleData scheduleData = new ScheduleData(
-                    date,
-                    startTime,
-                    matchStatus,
-                    team1,
-                    team2,
-                    teamImg1,
-                    teamImg2
-            );
-
-            log.info("scheduleData : " + scheduleData);
-
-            try {
-                MatchScheduleDto scheduleDto = MatchScheduleDto.builder()
-                        .month(month)
-                        .matchDate(scheduleData.date())
-                        .startTime(scheduleData.startTime())
-                        .team1(scheduleData.team1())
-                        .team2(scheduleData.team2())
-                        .matchStatus(scheduleData.matchStatus())
-                        .teamScore1(teamScore1)
-                        .teamScore2(teamScore2)
-                        .teamImg1(scheduleData.teamImg1())
-                        .teamImg2(scheduleData.teamImg2())
-                        .build();
-
-                matchScheduleRepository.save(scheduleDto.toEntity());
-                log.info("경기 일정 DB 저장 완료 !");
-            } catch (CustomException e) {
-                log.info("경기 일정 DB 저장 실패 !");
-                throw new CustomException(HttpStatus.BAD_REQUEST, ErrorCode.FAIL_TO_STORE_SCHEDULE_DATA);
-            }
-
         }
     }
 
@@ -179,10 +186,8 @@ public class CrawlingService {
             String backgroundImage = teamImgElement.getCssValue("background-image");
             log.info("Background Image : " + backgroundImage);
 
-            String imageUrl = backgroundImage
-                    .replace("url(", "")
-                    .replace(")", "")
-                    .replace("\"", "");
+            String imageUrl = backgroundImage.split("\\?")[0].substring(4).replaceAll("\"", "");
+            log.info("imageUrl : " + imageUrl);
 
             List<WebElement> teamElements = dataList.get(i+10).findElements(By.cssSelector(".record_list_data__3wyY7"));
 
@@ -228,6 +233,7 @@ public class CrawlingService {
     public void deleteMatchScheduleByMonth(int month) {
         try {
             matchScheduleRepository.deleteByMonth(month);
+            matchScheduleRepository.deleteByMonth(2);
             log.info(month + "월 일정 데이터 삭제 성공 !");
 
             matchScheduleRepository.resetAutoIncrement(); // id 값 1부터 시작 하도록

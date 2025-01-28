@@ -21,6 +21,8 @@ public class MatchScheduleResDto {
 
     private String matchStatus;
 
+    private String stageType;
+
     private String teamScore1;
 
     private String teamScore2;
