@@ -1,5 +1,6 @@
 package com.example.crawling.crawling;
 
+
 public record ScheduleData(
         String date,
         String startTime,
