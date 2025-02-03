@@ -48,7 +48,7 @@ public class CrawlingService {
 
         for (WebElement monthElement : unselectedMonths) {
             String nextMonthText = monthElement.findElement(By.cssSelector("span")).getText();
-            log.info("다음 월 데이터: " + nextMonthText); // "2월"과 같은 형식
+            log.info("다음 월 데이터: " + nextMonthText); // "x월"과 같은 형식
 
             // 다른 월의 일정 url
             String nextMonthHref = monthElement.getAttribute("href");
@@ -123,6 +123,9 @@ public class CrawlingService {
                 if (imageElements != null && imageElements.size() >= 2) {
                     teamImg1 = imageElements.get(0).getAttribute("src");
                     teamImg2 = imageElements.get(1).getAttribute("src");
+                } else if(imageElements != null && imageElements.size() >= 1) {
+                    teamImg1 = imageElements.get(0).getAttribute("src");
+                    teamImg2 = null;
                 }
 
                 ScheduleData scheduleData = new ScheduleData(
@@ -184,10 +187,7 @@ public class CrawlingService {
             // 팀 이미지
             WebElement teamImgElement = dataList.get(i).findElement(By.cssSelector(".record_list_thumb_logo__1s1BT"));
             String backgroundImage = teamImgElement.getCssValue("background-image");
-            log.info("Background Image : " + backgroundImage);
-
             String imageUrl = backgroundImage.split("\\?")[0].substring(4).replaceAll("\"", "");
-            log.info("imageUrl : " + imageUrl);
 
             List<WebElement> teamElements = dataList.get(i+10).findElements(By.cssSelector(".record_list_data__3wyY7"));
 
@@ -228,7 +228,6 @@ public class CrawlingService {
             }
         }
     }
-
     @Transactional
     public void deleteMatchScheduleByMonth(int month) {
         try {
@@ -242,7 +241,6 @@ public class CrawlingService {
             throw new CustomException(HttpStatus.BAD_REQUEST, ErrorCode.FAIL_TO_DELETE_SCHEDULE_DATA);
         }
     }
-
     @Transactional
     public void deleteRanking() {
         try {
