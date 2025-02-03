@@ -5,7 +5,6 @@ public record ScheduleData(
         String date,
         String startTime,
         String matchStatus,
-        String stageType,
         String team1,
         String team2,
         String teamImg1,

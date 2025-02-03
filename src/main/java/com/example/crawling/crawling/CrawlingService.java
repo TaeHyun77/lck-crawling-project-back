@@ -67,30 +67,6 @@ public class CrawlingService {
             }
         }
     }
-
-    private void crawlScheduleData(WebDriver driver, int month)  {
-
-        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(100));
-        wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector(".schedule_container__2rbMY")));
-
-        // 특정 날짜의 경기 목록 일정
-        List<WebElement> elements = driver.findElements(By.cssSelector(".card_item__3Covz"));
-
-        for (int i = 0; i < elements.size(); i++) {
-
-            // 경기 날짜
-            WebElement dateInfo = elements.get(i).findElement(By.cssSelector(".card_date__1kdC3"));
-            String date = dateInfo.getText();
-
-            // 각각의 경기 목록
-            List<WebElement> scheduleElements = elements.get(i).findElements(By.cssSelector(".row_item__dbJjy"));
-
-            for (int j = 0; j < scheduleElements.size(); j++) {
-
-                // 시작 시간
-                WebElement timeElements = scheduleElements.get(j).findElement(By.cssSelector(".row_time__28bwr"));
-                String startTime = timeElements.getText();
-
                 // 경기 결과 상태
                 WebElement matchStatusElements = scheduleElements.get(j).findElement(By.cssSelector(".row_state__2RKDU"));
                 String matchStatus = matchStatusElements.getText();
@@ -163,6 +139,7 @@ public class CrawlingService {
                     throw new CustomException(HttpStatus.BAD_REQUEST, ErrorCode.FAIL_TO_STORE_SCHEDULE_DATA);
                 }
             }
+
         }
     }
 
@@ -188,6 +165,7 @@ public class CrawlingService {
             WebElement teamImgElement = dataList.get(i).findElement(By.cssSelector(".record_list_thumb_logo__1s1BT"));
             String backgroundImage = teamImgElement.getCssValue("background-image");
             String imageUrl = backgroundImage.split("\\?")[0].substring(4).replaceAll("\"", "");
+            log.info("Background Image : " + backgroundImage);
 
             List<WebElement> teamElements = dataList.get(i+10).findElements(By.cssSelector(".record_list_data__3wyY7"));
 
@@ -232,7 +210,7 @@ public class CrawlingService {
     public void deleteMatchScheduleByMonth(int month) {
         try {
             matchScheduleRepository.deleteByMonth(month);
-            matchScheduleRepository.deleteByMonth(2);
+
             log.info(month + "월 일정 데이터 삭제 성공 !");
 
             matchScheduleRepository.resetAutoIncrement(); // id 값 1부터 시작 하도록
