@@ -24,9 +24,8 @@ public class UserController {
     public ResponseEntity<?> userInfo(HttpServletRequest request) {
 
         String authorizationHeader = request.getHeader("Authorization");
-        log.info(authorizationHeader);
 
-        if (authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")) {
+        if (authorizationHeader == null || jwtUtil.isExpired(authorizationHeader)) {
             return new ResponseEntity<>("UNAUTHORIZED", HttpStatus.UNAUTHORIZED);
         }
 
@@ -44,6 +43,7 @@ public class UserController {
     public ResponseEntity<String> googleLogout(HttpServletRequest request, HttpServletResponse response) {
 
         HttpSession session = request.getSession(false);
+
         if (session != null) {
             session.invalidate();
         }
