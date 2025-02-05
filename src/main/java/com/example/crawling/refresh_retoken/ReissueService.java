@@ -24,7 +24,7 @@ public class ReissueService {
     public ResponseEntity<?> reissue(String refreshAuthorization, HttpServletRequest request, HttpServletResponse response) {
 
         String refresh = refreshAuthorization.substring(7);
-        log.info("Reissue refreshAuthorization : " + refresh);
+        log.info("Reissue : " + refresh);
 
         try {
             jwtUtil.isExpired(refresh);
