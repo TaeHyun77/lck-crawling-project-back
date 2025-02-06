@@ -1,3 +1,4 @@
+/*
 package com.example.crawling.config;
 
 import lombok.RequiredArgsConstructor;
@@ -19,3 +20,4 @@ public class WebConfig implements WebMvcConfigurer {
                 .allowCredentials(true);
     }
 }
+*/

@@ -28,7 +28,6 @@ public class CrawlingService {
 
     private final MatchScheduleRepository matchScheduleRepository;
     private final RankRepository rankRepository;
-    private final CrawlingHistory crawlingHistory;
 
     // ********** 2월 기준 **********
     public void getDataList(WebDriver driver) {
@@ -56,13 +55,14 @@ public class CrawlingService {
 
             String nextMonth = nextMonthHref.split("date=")[1]; // YYYY-MM 형식
 
-            if (!crawlingHistory.isCrawled(nextMonth)) {
+            int other_month = Integer.parseInt(nextMonth.split("-")[1]);
+
+            if (!matchScheduleRepository.existsByMonth(other_month)) {
                 log.info(nextMonth + " 크롤링 시작!");
                 driver.manage().deleteAllCookies();
                 driver.get(nextMonthHref);
                 driver.navigate().refresh();
-                crawlScheduleData(driver, Integer.parseInt(nextMonth.split("-")[1]));
-                crawlingHistory.markAsCrawled(nextMonth);
+                crawlScheduleData(driver, other_month);
             } else {
                 log.info(nextMonth + " 이미 크롤링 완료된 데이터입니다.");
             }

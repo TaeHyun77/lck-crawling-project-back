@@ -1,13 +1,14 @@
 package com.example.crawling.user;
 
 import com.example.crawling.config.BaseTime;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import com.example.crawling.team.UserTeamMap;
+import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @NoArgsConstructor
@@ -25,6 +26,9 @@ public class User extends BaseTime {
     private String email;
 
     private String role;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<UserTeamMap> userTeamMap = new ArrayList<>();
 
     @Builder
     public User(String username, String name, String email, String role) {

@@ -2,6 +2,7 @@ package com.example.crawling.config;
 
 import com.example.crawling.exception.CustomException;
 import com.example.crawling.exception.ErrorCode;
+import io.github.bonigarcia.wdm.WebDriverManager;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
@@ -14,14 +15,13 @@ import java.util.Currency;
 @Configuration
 public class WebDriverConfig {
 
-    private static final String DRIVERPATH = "C:\\chromedriver-win64\\chromedriver.exe";
-
     @Bean
     public WebDriver webDriver() {
 
         try {
 
-            System.setProperty("webdriver.chrome.driver", DRIVERPATH);
+            // 크롬 버전에 맞는 driver 자동 설치
+            WebDriverManager.chromedriver().setup();
 
             ChromeOptions options = new ChromeOptions();
             options.addArguments("--remote-allow-origins=*");

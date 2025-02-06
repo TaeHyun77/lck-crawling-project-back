@@ -15,4 +15,5 @@ public interface MatchScheduleRepository extends JpaRepository<MatchSchedule, Lo
     @Transactional
     void resetAutoIncrement();
 
+    boolean existsByMonth(int month);
 }

@@ -5,6 +5,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
@@ -14,10 +16,19 @@ public class UserResponseDto {
 
     private String role;
 
-    public static UserResponseDto of(String username,String role) {
+    private String name;
+
+    private String email;
+
+    private List<String> teamNames;
+
+    public static UserResponseDto of(String username,String role, String name, String email, List<String> teamNames) {
         return UserResponseDto.builder()
                 .username(username)
                 .role(role)
+                .name(name)
+                .email(email)
+                .teamNames(teamNames)
                 .build();
     }
 

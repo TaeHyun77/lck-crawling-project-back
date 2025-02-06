@@ -49,8 +49,8 @@ public class ReissueService {
         }
         */
 
-        String newJwt = jwtUtil.createJwt("access", username, role, 60*10000L);
-        String newRefresh = jwtUtil.createJwt("refresh", username, role, 60*60*10000L);
+        String newJwt = jwtUtil.createJwt("access", username, role, 1800000L); // 3시간
+        String newRefresh = jwtUtil.createJwt("refresh", username, role, 259200000L); // 3일
 
         log.info("New Access Token: " + newJwt);
 
@@ -69,5 +69,4 @@ public class ReissueService {
 
         return cookie;
     }
-
 }

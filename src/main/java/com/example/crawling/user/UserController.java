@@ -1,6 +1,7 @@
 package com.example.crawling.user;
 
 import com.example.crawling.jwt.JwtUtil;
+import com.example.crawling.oauth.CustomOAuth2User;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -13,7 +14,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -21,6 +24,7 @@ import java.util.Map;
 public class UserController {
 
     private final JwtUtil jwtUtil;
+    private final UserRepository userRepository;
 
     @GetMapping("/info")
     public ResponseEntity<?> userInfo(HttpServletRequest request) {
@@ -42,7 +46,16 @@ public class UserController {
             String username = jwtUtil.getUsername(token);
             String role = jwtUtil.getRole(token);
 
-            UserResponseDto info = UserResponseDto.of(username, role);
+            User user = userRepository.findByUsername(username);
+
+            String name = user.getName();
+            String email = user.getEmail();
+
+            List<String> teamNames = user.getUserTeamMap().stream()
+                    .map(userTeamMap -> userTeamMap.getTeam().getTeamName())
+                    .toList();
+
+            UserResponseDto info = UserResponseDto.of(username, role, name, email, teamNames);
 
             return new ResponseEntity<>(info, HttpStatus.OK);
         } catch (Exception e) {

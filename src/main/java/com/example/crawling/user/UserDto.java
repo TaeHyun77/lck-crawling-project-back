@@ -4,6 +4,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.List;
+
 @Getter
 @Setter
 public class UserDto {
@@ -12,6 +14,8 @@ public class UserDto {
     private String name;
     private String email;
     private String role;
+
+    private List<String> teamName;
 
     @Builder
     public UserDto(String username, String name, String email, String role) {
