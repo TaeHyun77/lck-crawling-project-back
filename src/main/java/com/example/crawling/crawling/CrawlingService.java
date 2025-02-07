@@ -2,11 +2,11 @@ package com.example.crawling.crawling;
 
 import com.example.crawling.exception.CustomException;
 import com.example.crawling.exception.ErrorCode;
+import com.example.crawling.ranking.RankingDto;
+import com.example.crawling.ranking.RankingRepository;
 import com.example.crawling.schedule.MatchSchedule;
 import com.example.crawling.schedule.MatchScheduleDto;
 import com.example.crawling.schedule.MatchScheduleRepository;
-import com.example.crawling.rank.RankDto;
-import com.example.crawling.rank.RankRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.openqa.selenium.By;
@@ -20,10 +20,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.time.Duration;
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+
 
 @Slf4j
 @RequiredArgsConstructor
@@ -31,7 +31,7 @@ import java.util.Optional;
 public class CrawlingService {
 
     private final MatchScheduleRepository matchScheduleRepository;
-    private final RankRepository rankRepository;
+    private final RankingRepository rankingRepository;
 
     // ********** 2월 기준 **********
     public void getDataList(WebDriver driver) {
@@ -210,76 +210,70 @@ public class CrawlingService {
                 !Objects.equals(existing.getTeamImg2(), newSchedule.getTeamImg2());
     }
 
-    public void getRankingData(WebDriver driver) {
 
-        deleteRanking();
+    public void getRanking(WebDriver driver) {
 
-        driver.get("https://game.naver.com/esports/League_of_Legends/record/lck/team/lck_2024_summer");
+        driver.get("https://esports.op.gg/standings/lck");
         WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(100));
-        wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector(".record_list_wrap__A8cnT")));
-        List<WebElement> dataList = driver.findElements(By.cssSelector(".record_list_item__2fFsp"));
+        wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector(".space-y-2")));
 
-        for (int i = 0; i < dataList.size()/2; i++) {
+        List<WebElement> tabs = driver.findElements(By.cssSelector(".flex.lg\\:p-1.lg\\:mx-0.mx-3.rounded.bg-gray-800.mb-2 > div"));
 
-            wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector(".record_list_wrap__A8cnT")));
-            wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector(".record_list_thumb_logo__1s1BT")));
+        for (WebElement tab : tabs) {
 
-            // 팀 이름
-            WebElement teamNameElement = dataList.get(i).findElement(By.cssSelector(".record_list_name__27huQ"));
-            String teamName = teamNameElement.getText();
+            tab.click();
 
-            // 팀 이미지
-            WebElement teamImgElement = dataList.get(i).findElement(By.cssSelector(".record_list_thumb_logo__1s1BT"));
-            String backgroundImage = teamImgElement.getCssValue("background-image");
-            String imageUrl = backgroundImage.split("\\?")[0].substring(4).replaceAll("\"", "");
+            wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector(".dark\\:border-gray-900.border-t.border-gray-200.cursor-pointer.lg\\:h-12.h-10.hover\\:bg-gray-200.dark\\:bg-gray-800.dark\\:hover\\:bg-gray-850.border-t-gray-900")));
 
-            List<WebElement> teamElements = dataList.get(i+10).findElements(By.cssSelector(".record_list_data__3wyY7"));
+            List<WebElement> dataList = driver.findElements(By.cssSelector(".dark\\:border-gray-900.border-t.border-gray-200.cursor-pointer.lg\\:h-12.h-10.hover\\:bg-gray-200.dark\\:bg-gray-800.dark\\:hover\\:bg-gray-850.border-t-gray-900"));
 
-            RankingData rankingData = new RankingData(
-                    teamName,
-                    teamElements.get(0).getText(), // winCnt
-                    teamElements.get(1).getText(), // loseCnt
-                    teamElements.get(2).getText(), // pointDiff
-                    teamElements.get(3).getText(), // winRate
-                    teamElements.get(4).getText(), // kda
-                    teamElements.get(5).getText(), // killCnt
-                    teamElements.get(6).getText(), // deathCnt
-                    teamElements.get(7).getText(),  // assistCnt
-                    imageUrl
-            );
+            for (WebElement webElement : dataList) {
 
-            try {
-                RankDto rankData = RankDto.builder()
-                        .teamName(rankingData.teamName())
-                        .teamImgUrl(rankingData.imageUrl())
-                        .winCnt(rankingData.winCnt())
-                        .loseCnt(rankingData.loseCnt())
-                        .pointDiff(rankingData.pointDiff())
-                        .winRate(rankingData.winRate())
-                        .kda(rankingData.kda())
-                        .killCnt(rankingData.killCnt())
-                        .deathCnt(rankingData.deathCnt())
-                        .assistCnt(rankingData.assistCnt())
-                        .build();
+                String all = webElement.getText();
+                String[] parts = all.split("\n");
 
-                rankRepository.save(rankData.toRankEntity());
-            } catch (CustomException e) {
-                log.info("순위 일정 DB 저장 실패 !");
-                throw new CustomException(HttpStatus.BAD_REQUEST, ErrorCode.FAIL_TO_STORE_RANKING_DATA);
+                // 순위
+                int teamRank = Integer.parseInt(parts[0]);
+
+                // 이미지
+                WebElement imgElement = webElement.findElement(By.cssSelector(".flex.items-center.text-t2 img"));
+                String img = imgElement.getAttribute("src");
+
+                // 팀 명
+                WebElement teamNameElement = webElement.findElement(By.cssSelector(".flex.items-center.text-t2 span"));
+                String teamName = teamNameElement.getText();
+
+                // 승패
+                WebElement recordElement = webElement.findElement(By.cssSelector(".whitespace-nowrap"));
+                String record = recordElement.getText().split("\\d+%")[0].trim();
+
+                // 세트당 승패
+                String recordSet = parts[3].replaceAll("(\\d+W \\d+L).*", "$1");
+
+                RankingData rankingData = new RankingData(
+                        teamRank,
+                        img,
+                        teamName,
+                        record,
+                        recordSet
+                );
+
+                try {
+                    RankingDto rankingDto = RankingDto.builder()
+                            .teamRank(rankingData.teamRank())
+                            .img(rankingData.img())
+                            .teamName(rankingData.teamName())
+                            .record(rankingData.record())
+                            .recordSet(rankingData.recordSet())
+                            .build();
+
+                    rankingRepository.save(rankingDto.toRanking());
+                } catch (CustomException e) {
+                    log.info("랭킹 데이터 DB 저장 실패 !");
+                    throw new CustomException(HttpStatus.BAD_REQUEST, ErrorCode.FAIL_TO_STORE_RANKING_DATA);
+                }
+
             }
-        }
-    }
-
-    @Transactional
-    public void deleteRanking() {
-        try {
-            rankRepository.deleteAll();
-            log.info("순위 데이터 삭제 성공 !");
-
-            rankRepository.resetAutoIncrement();
-        } catch (CustomException e) {
-            log.info("순위 데이터 삭제 실패 !");
-            throw new CustomException(HttpStatus.BAD_REQUEST, ErrorCode.FAIL_TO_DELETE_RANKING_DATA);
         }
     }
 }

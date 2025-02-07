@@ -17,7 +17,7 @@ public class Crawling {
     public void process() {
         try {
             crawlingService.getDataList(driver);
-            crawlingService.getRankingData(driver);
+            crawlingService.getRanking(driver);
         } catch (CustomException e) {
             throw new CustomException(HttpStatus.BAD_REQUEST, ErrorCode.FAIL_TO_LOAD_DRIVER);
         }
