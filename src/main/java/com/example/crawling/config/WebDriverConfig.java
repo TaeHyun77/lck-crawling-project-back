@@ -31,9 +31,9 @@ public class WebDriverConfig {
             options.addArguments("--disable-cache", "--disable-application-cache", "--disk-cache-size=0");
 
             // headless 하면 크롤링 하는 것을 사이트에서 알기에 ip를 차단당함 -> user-agent 사용
-            options.addArguments("--headless");
-            options.addArguments("--window-size=1920x1080");
-            options.addArguments("user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.20 Safari/537.36");
+//            options.addArguments("--headless");
+//            options.addArguments("--window-size=1920x1080");
+//            options.addArguments("user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.20 Safari/537.36");
 
             return new ChromeDriver(options);
 

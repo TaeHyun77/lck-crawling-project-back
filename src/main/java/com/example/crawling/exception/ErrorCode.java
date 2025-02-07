@@ -29,7 +29,9 @@ public enum ErrorCode {
 
     INVALID_ACCESS_TOKEN("INVALID_ACCESS_TOKEN", "access 토큰이 아닙니다."),
 
-    NOT_FOUND_USER("NOT_FOUND_USER", "유저를 찾을 수 없습니다.");
+    NOT_FOUND_USER("NOT_FOUND_USER", "유저를 찾을 수 없습니다."),
+
+    NOT_FOUNT_MATCHSCHEDULE("NOT_FOUNT_MATCHSCHEDULE", "해당 일정을 찾을 수 없습니다.");
 
 
     private final String errorCode;

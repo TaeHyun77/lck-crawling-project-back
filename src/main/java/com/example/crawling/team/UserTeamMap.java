@@ -29,5 +29,4 @@ public class UserTeamMap {
     @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)
     @JoinColumn(name = "team_id")
     private Team team;
-
 }

@@ -5,15 +5,11 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Optional;
+
 public interface MatchScheduleRepository extends JpaRepository<MatchSchedule, Long> {
 
-    @Transactional
-    void deleteByMonth(int month);
-
-    @Modifying
-    @Query(value = "ALTER TABLE match_schedule AUTO_INCREMENT = 1", nativeQuery = true)
-    @Transactional
-    void resetAutoIncrement();
-
     boolean existsByMonth(int month);
+
+    Optional<MatchSchedule> findByMatchDateAndTeam1AndTeam2(String matchDate, String team1, String team2);
 }

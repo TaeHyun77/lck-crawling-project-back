@@ -2,6 +2,7 @@ package com.example.crawling.crawling;
 
 import com.example.crawling.exception.CustomException;
 import com.example.crawling.exception.ErrorCode;
+import com.example.crawling.schedule.MatchSchedule;
 import com.example.crawling.schedule.MatchScheduleDto;
 import com.example.crawling.schedule.MatchScheduleRepository;
 import com.example.crawling.rank.RankDto;
@@ -9,6 +10,7 @@ import com.example.crawling.rank.RankRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.openqa.selenium.By;
+import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
@@ -20,6 +22,8 @@ import java.time.Duration;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -33,39 +37,37 @@ public class CrawlingService {
     public void getDataList(WebDriver driver) {
 
         LocalDate currentDate = LocalDate.now();
-        String formattedDate = currentDate.format(DateTimeFormatter.ofPattern("yyyy-MM"));
-        int month = Integer.parseInt(currentDate.format(DateTimeFormatter.ofPattern("MM")));
-
-        log.info("현재 크롤링 월 : " + formattedDate);
-        deleteMatchScheduleByMonth(month);
+        int month = currentDate.getMonthValue();
+        log.info("현재 크롤링 월 : " + month);
 
         // 현재 월 데이터 크롤링 ( 2월꺼 )
         driver.get("https://game.naver.com/esports/League_of_Legends/schedule/lck");
         crawlScheduleData(driver, month);
 
         // 다음 월 데이터 크롤링 ( 1월꺼 , 한 번만 실행 )
-        List<WebElement> unselectedMonths = driver.findElements(By.cssSelector("a[data-selected='false']"));
+        WebElement unselectedMonths = driver.findElement(By.cssSelector("a[data-selected='false']"));
 
-        for (WebElement monthElement : unselectedMonths) {
-            String nextMonthText = monthElement.findElement(By.cssSelector("span")).getText();
-            log.info("다음 월 데이터: " + nextMonthText); // "1월"과 같은 형식
+        // 다른 월의 일정 url ( 1월꺼 )
+        String nextMonthHref = unselectedMonths.getAttribute("href");
 
-            // 다른 월의 일정 url ( 1월꺼 )
-            String nextMonthHref = monthElement.getAttribute("href");
+        String nextMonthText = unselectedMonths.findElement(By.cssSelector("span")).getText();
+        log.info("다음 월 데이터: " + nextMonthText); // "1월"과 같은 형식
 
-            String nextMonth = nextMonthHref.split("date=")[1]; // YYYY-MM 형식
+        int other_month = Integer.parseInt(nextMonthText.replace("월", ""));
 
-            int other_month = Integer.parseInt(nextMonth.split("-")[1]);
+        if (!matchScheduleRepository.existsByMonth(other_month)) {
+            log.info(nextMonthText + " 크롤링 시작!");
 
-            if (!matchScheduleRepository.existsByMonth(other_month)) {
-                log.info(nextMonth + " 크롤링 시작!");
-                driver.manage().deleteAllCookies();
-                driver.get(nextMonthHref);
-                driver.navigate().refresh();
-                crawlScheduleData(driver, other_month);
-            } else {
-                log.info(nextMonth + " 이미 크롤링 완료된 데이터입니다.");
-            }
+            driver.manage().deleteAllCookies();
+            driver.get(nextMonthHref);
+
+            // 강제 새로 고침
+            JavascriptExecutor jsExecutor = (JavascriptExecutor) driver;
+            jsExecutor.executeScript("location.reload();");
+
+            crawlScheduleData(driver, other_month);
+        } else {
+            log.info(nextMonthText + " 이미 크롤링 완료된 데이터입니다.");
         }
     }
 
@@ -140,8 +142,6 @@ public class CrawlingService {
                         teamImg2
                 );
 
-//                log.info("scheduleData : " + scheduleData);
-
                 try {
                     MatchScheduleDto scheduleDto = MatchScheduleDto.builder()
                             .month(month)
@@ -157,13 +157,57 @@ public class CrawlingService {
                             .teamImg2(scheduleData.teamImg2())
                             .build();
 
-                    matchScheduleRepository.save(scheduleDto.toEntity());
+                    saveOrUpdateMatchSchedule(scheduleDto.toEntity());
                 } catch (CustomException e) {
                     log.info("경기 일정 DB 저장 실패 !");
                     throw new CustomException(HttpStatus.BAD_REQUEST, ErrorCode.FAIL_TO_STORE_SCHEDULE_DATA);
                 }
             }
         }
+    }
+
+    @Transactional
+    public void saveOrUpdateMatchSchedule(MatchSchedule matchSchedule) {
+
+        Optional<MatchSchedule> existingSchedule;
+
+        try {
+            existingSchedule = matchScheduleRepository.findByMatchDateAndTeam1AndTeam2(
+                    matchSchedule.getMatchDate(), matchSchedule.getTeam1(), matchSchedule.getTeam2());
+        } catch (CustomException e) {
+            throw new CustomException(HttpStatus.BAD_REQUEST, ErrorCode.NOT_FOUNT_MATCHSCHEDULE);
+        }
+
+        if (existingSchedule.isPresent()) {
+            MatchSchedule schedule = existingSchedule.get();
+
+            if (isMatchScheduleChanged(schedule, matchSchedule)) {
+                schedule.updateMatchSchedule(
+                        matchSchedule.getMonth(), matchSchedule.getMatchDate(), matchSchedule.getStartTime(),
+                        matchSchedule.getTeam1(), matchSchedule.getTeam2(), matchSchedule.getMatchStatus(),
+                        matchSchedule.getStageType(), matchSchedule.getTeamScore1(), matchSchedule.getTeamScore2(),
+                        matchSchedule.getTeamImg1(), matchSchedule.getTeamImg2()
+                );
+
+                matchScheduleRepository.save(schedule);
+                log.info(matchSchedule.getMatchDate() + " " + matchSchedule.getTeam1() + "-" + matchSchedule.getTeam2() + "의 경기 정보가 업데이트 되었습니다.");
+            } else {
+                log.info(matchSchedule.getMatchDate() + " " + matchSchedule.getTeam1() + "-" + matchSchedule.getTeam2() + "의 경기 정보는 변경 되지 않았습니다.");
+            }
+        } else {
+            matchScheduleRepository.save(matchSchedule);
+            log.info("새로운 경기 일정 저장");
+        }
+    }
+
+    private boolean isMatchScheduleChanged(MatchSchedule existing, MatchSchedule newSchedule) {
+        return !existing.getStartTime().equals(newSchedule.getStartTime()) ||
+                !existing.getMatchStatus().equals(newSchedule.getMatchStatus()) ||
+                !existing.getStageType().equals(newSchedule.getStageType()) ||
+                !existing.getTeamScore1().equals(newSchedule.getTeamScore1()) ||
+                !existing.getTeamScore2().equals(newSchedule.getTeamScore2()) ||
+                !Objects.equals(existing.getTeamImg1(), newSchedule.getTeamImg1()) ||
+                !Objects.equals(existing.getTeamImg2(), newSchedule.getTeamImg2());
     }
 
     public void getRankingData(WebDriver driver) {
@@ -204,8 +248,6 @@ public class CrawlingService {
                     imageUrl
             );
 
-//            log.info("rankingData : " + rankingData);
-
             try {
                 RankDto rankData = RankDto.builder()
                         .teamName(rankingData.teamName())
@@ -227,19 +269,7 @@ public class CrawlingService {
             }
         }
     }
-    @Transactional
-    public void deleteMatchScheduleByMonth(int month) {
-        try {
-            matchScheduleRepository.deleteByMonth(month);
-            matchScheduleRepository.deleteByMonth(2);
-            log.info(month + "월 일정 데이터 삭제 성공 !");
 
-            matchScheduleRepository.resetAutoIncrement(); // id 값 1부터 시작 하도록
-        } catch (Exception e) {
-            log.info(month + "월 일정 데이터 삭제 실패 !");
-            throw new CustomException(HttpStatus.BAD_REQUEST, ErrorCode.FAIL_TO_DELETE_SCHEDULE_DATA);
-        }
-    }
     @Transactional
     public void deleteRanking() {
         try {

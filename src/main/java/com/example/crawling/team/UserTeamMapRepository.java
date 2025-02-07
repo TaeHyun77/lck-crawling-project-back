@@ -18,8 +18,4 @@ public interface UserTeamMapRepository extends JpaRepository<UserTeamMap, Long> 
     void deleteByUserId(@Param("userId") Long userId);
 
     boolean existsByTeam(Team team);
-
-
-
-
 }
