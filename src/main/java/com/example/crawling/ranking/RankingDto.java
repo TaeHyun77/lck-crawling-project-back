@@ -9,6 +9,8 @@ import org.checkerframework.checker.units.qual.N;
 @Getter
 public class RankingDto {
 
+    private String stage;
+
     private int teamRank;
 
     private String img;
@@ -20,7 +22,8 @@ public class RankingDto {
     private String recordSet;
 
     @Builder
-    public RankingDto(int teamRank, String img, String teamName, String record, String recordSet) {
+    public RankingDto(String stage, int teamRank, String img, String teamName, String record, String recordSet) {
+        this.stage = stage;
         this.teamRank = teamRank;
         this.img = img;
         this.teamName = teamName;
@@ -30,6 +33,7 @@ public class RankingDto {
 
     public Ranking toRanking() {
         return Ranking.builder()
+                .stage(stage)
                 .teamRank(teamRank)
                 .img(img)
                 .teamName(teamName)

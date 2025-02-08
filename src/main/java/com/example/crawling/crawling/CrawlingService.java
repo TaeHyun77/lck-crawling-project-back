@@ -2,6 +2,7 @@ package com.example.crawling.crawling;
 
 import com.example.crawling.exception.CustomException;
 import com.example.crawling.exception.ErrorCode;
+import com.example.crawling.ranking.Ranking;
 import com.example.crawling.ranking.RankingDto;
 import com.example.crawling.ranking.RankingRepository;
 import com.example.crawling.schedule.MatchSchedule;
@@ -229,6 +230,8 @@ public class CrawlingService {
 
             for (WebElement webElement : dataList) {
 
+                String stage = tab.getText();
+
                 String all = webElement.getText();
                 String[] parts = all.split("\n");
 
@@ -251,6 +254,7 @@ public class CrawlingService {
                 String recordSet = parts[3].replaceAll("(\\d+W \\d+L).*", "$1");
 
                 RankingData rankingData = new RankingData(
+                        stage,
                         teamRank,
                         img,
                         teamName,
@@ -260,6 +264,7 @@ public class CrawlingService {
 
                 try {
                     RankingDto rankingDto = RankingDto.builder()
+                            .stage(rankingData.stage())
                             .teamRank(rankingData.teamRank())
                             .img(rankingData.img())
                             .teamName(rankingData.teamName())
@@ -267,13 +272,48 @@ public class CrawlingService {
                             .recordSet(rankingData.recordSet())
                             .build();
 
-                    rankingRepository.save(rankingDto.toRanking());
+                    saveOrUpdateRanking(rankingDto.toRanking(), stage);
                 } catch (CustomException e) {
                     log.info("랭킹 데이터 DB 저장 실패 !");
                     throw new CustomException(HttpStatus.BAD_REQUEST, ErrorCode.FAIL_TO_STORE_RANKING_DATA);
                 }
-
             }
         }
     }
+
+    @Transactional
+    public void saveOrUpdateRanking(Ranking ranking, String stage) {
+
+        Optional<Ranking> existRanking; // DB에 저장된 값
+
+        try {
+            existRanking = rankingRepository.findByTeamNameAndStage(ranking.getTeamName(), stage);
+        } catch (CustomException e) {
+            throw new CustomException(HttpStatus.BAD_REQUEST, ErrorCode.NOT_FOUND_RANKING_DATA);
+        }
+
+        if (existRanking.isPresent()) {
+            Ranking rankingData = existRanking.get();
+
+            if (isRankingChanged(rankingData, ranking)) {
+                rankingData.updateRanking(ranking.getTeamRank(), ranking.getRecord(), ranking.getRecordSet());
+
+                rankingRepository.save(rankingData);
+                log.info(stage + " " + rankingData.getTeamName() + " 의 순위 정보가 업데이트 되었습니다.");
+            } else {
+                log.info(stage + " " + rankingData.getTeamName() + " 의 순위 정보가 업데이트 되지 않았습니다.");
+            }
+        } else {
+            rankingRepository.save(ranking);
+            log.info("새로운 순위 저장");
+        }
+    }
+
+    private boolean isRankingChanged(Ranking existing, Ranking newRanking) {
+        return existing.getTeamRank() != newRanking.getTeamRank() ||
+                !existing.getRecord().equals(newRanking.getRecord()) ||
+                !existing.getRecordSet().equals(newRanking.getRecordSet());
+    }
+
+
 }
