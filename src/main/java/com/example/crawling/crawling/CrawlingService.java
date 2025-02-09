@@ -84,7 +84,7 @@ public class CrawlingService {
 
             // 경기 날짜
             WebElement dateInfo = elements.get(i).findElement(By.cssSelector(".card_date__1kdC3"));
-            String date = dateInfo.getText();
+            String date = dateInfo.getText().replace("오늘", "");
 
             // 각각의 경기 목록
             List<WebElement> scheduleElements = elements.get(i).findElements(By.cssSelector(".row_item__dbJjy"));
@@ -173,8 +173,8 @@ public class CrawlingService {
         Optional<MatchSchedule> existingSchedule;
 
         try {
-            existingSchedule = matchScheduleRepository.findByMatchDateAndTeam1AndTeam2(
-                    matchSchedule.getMatchDate(), matchSchedule.getTeam1(), matchSchedule.getTeam2());
+            existingSchedule = matchScheduleRepository.findByMatchDateAndStartTime(
+                    matchSchedule.getMatchDate(), matchSchedule.getStartTime());
         } catch (CustomException e) {
             throw new CustomException(HttpStatus.BAD_REQUEST, ErrorCode.NOT_FOUNT_MATCHSCHEDULE);
         }
@@ -184,10 +184,8 @@ public class CrawlingService {
 
             if (isMatchScheduleChanged(schedule, matchSchedule)) {
                 schedule.updateMatchSchedule(
-                        matchSchedule.getMonth(), matchSchedule.getMatchDate(), matchSchedule.getStartTime(),
                         matchSchedule.getTeam1(), matchSchedule.getTeam2(), matchSchedule.getMatchStatus(),
-                        matchSchedule.getStageType(), matchSchedule.getTeamScore1(), matchSchedule.getTeamScore2(),
-                        matchSchedule.getTeamImg1(), matchSchedule.getTeamImg2()
+                        matchSchedule.getStageType(), matchSchedule.getTeamScore1(), matchSchedule.getTeamScore2()
                 );
 
                 matchScheduleRepository.save(schedule);
@@ -314,6 +312,4 @@ public class CrawlingService {
                 !existing.getRecord().equals(newRanking.getRecord()) ||
                 !existing.getRecordSet().equals(newRanking.getRecordSet());
     }
-
-
 }

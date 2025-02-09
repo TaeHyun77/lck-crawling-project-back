@@ -1,4 +1,4 @@
-package com.example.crawling.config;
+package com.example.crawling.crawling;
 
 import com.example.crawling.crawling.Crawling;
 import com.example.crawling.exception.CustomException;
