@@ -26,6 +26,7 @@ out/
 !**/src/main/**/out/
 !**/src/test/**/out/
 application.properties
+/src/main/resource/firebase/lck-crawling-project.json
 
 ### NetBeans ###
 /nbproject/private/

@@ -11,10 +11,13 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
+import org.springframework.security.web.context.SecurityContextRepository;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
+import java.security.Security;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;
@@ -49,6 +52,8 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
                 .build();
 
         refreshRepository.save(refresh);
+
+        SecurityContextHolder.getContext().setAuthentication(authentication);
 
         response.setHeader("authorization", token);
         response.addCookie(createCookie("authorization", token));

@@ -46,8 +46,7 @@ dependencies {
 	// web driver 자동 업데이트, 설치를 위함
 	implementation 'io.github.bonigarcia:webdrivermanager:5.7.0'
 
-	implementation 'org.springframework.boot:spring-boot-starter-mail'
-
+	implementation 'com.google.firebase:firebase-admin:9.2.0'
 }
 
 tasks.named('test') {

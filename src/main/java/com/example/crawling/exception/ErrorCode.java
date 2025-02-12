@@ -33,7 +33,9 @@ public enum ErrorCode {
 
     NOT_FOUNT_MATCHSCHEDULE("NOT_FOUNT_MATCHSCHEDULE", "해당 일정을 찾을 수 없습니다."),
 
-    NOT_FOUND_RANKING_DATA("NOT_FOUND_RANKING_DATA", "해당 순위 데이터를 찾을 수 없습니다.");
+    NOT_FOUND_RANKING_DATA("NOT_FOUND_RANKING_DATA", "해당 순위 데이터를 찾을 수 없습니다."),
+
+    NOT_FOUND_FCMTOKEN("NOT_FOUND_FCMTOKEN", "FCM 토큰을 찾을 수 없습니다.");
 
 
     private final String errorCode;

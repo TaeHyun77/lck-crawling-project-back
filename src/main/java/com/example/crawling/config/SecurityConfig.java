@@ -15,6 +15,7 @@ import org.springframework.security.config.annotation.web.configurers.AbstractHt
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.context.*;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -44,7 +45,11 @@ public class SecurityConfig {
 
                 .httpBasic((auth) -> auth.disable())
 
-                .addFilterBefore(new JwtFilter(jwtUtil), UsernamePasswordAuthenticationFilter.class)
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+
+
+                .addFilterBefore(new JwtFilter(jwtUtil),
+                        UsernamePasswordAuthenticationFilter.class)
 
                 //oauth2
                 .oauth2Login((oauth2) -> oauth2
@@ -55,10 +60,7 @@ public class SecurityConfig {
 
                 .authorizeHttpRequests((auth) -> auth
                         .requestMatchers("/", "/schedules", "/reToken", "/oauth2/**", "/**").permitAll()
-                        .anyRequest().authenticated())
-
-                .sessionManagement((session) -> session
-                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS));
+                        .anyRequest().authenticated());
 
         return http.build();
     }

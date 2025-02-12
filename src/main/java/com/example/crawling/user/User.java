@@ -6,10 +6,12 @@ import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@Setter
 @Getter
 @NoArgsConstructor
 @Entity
@@ -30,11 +32,17 @@ public class User extends BaseTime {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<UserTeamMap> userTeamMap = new ArrayList<>();
 
+    private String fcmToken;
+
     @Builder
     public User(String username, String name, String email, String role) {
         this.username = username;
         this.name = name;
         this.email = email;
         this.role = role;
+    }
+
+    public void updateFcmToken(String fcmToken) {
+        this.fcmToken = fcmToken;
     }
 }

@@ -5,7 +5,6 @@ import com.example.crawling.exception.CustomException;
 import com.example.crawling.exception.ErrorCode;
 import com.example.crawling.oauth.CustomOAuth2User;
 import com.example.crawling.user.User;
-import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.Cookie;
@@ -17,11 +16,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.web.context.SecurityContextRepository;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-import java.io.CharConversionException;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -71,10 +69,14 @@ public class JwtFilter extends OncePerRequestFilter {
                 .build();
 
         Map<String, Object> attributes = new HashMap<>();
+        attributes.put("username", user.getUsername());
+        attributes.put("email", user.getEmail());
+
         CustomOAuth2User customOAuth2User = new CustomOAuth2User(user, attributes);
 
         Authentication authToken = new UsernamePasswordAuthenticationToken(customOAuth2User, null, customOAuth2User.getAuthorities());
         SecurityContextHolder.getContext().setAuthentication(authToken);
+
 
         filterChain.doFilter(request, response);
     }
