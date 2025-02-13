@@ -38,7 +38,6 @@ public class MatchSchedule extends BaseTime {
 
     private String teamImg2;
 
-
     @Builder
     public MatchSchedule(int month, String matchDate, String startTime, String team1, String team2, String matchStatus, String stageType, String teamScore1, String teamScore2, String teamImg1, String teamImg2) {
         this.month = month;
@@ -62,5 +61,4 @@ public class MatchSchedule extends BaseTime {
         this.teamScore1 = teamScore1;
         this.teamScore2 = teamScore2;
     }
-
 }

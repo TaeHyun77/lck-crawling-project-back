@@ -11,4 +11,5 @@ public class CustomExceptionHandler {
     protected ResponseEntity<ErrorDto> handleCustom400Exception(CustomException ex) {
         return ErrorDto.toResponseEntity(ex);
     }
+
 }

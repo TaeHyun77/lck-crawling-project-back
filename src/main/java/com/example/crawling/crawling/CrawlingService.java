@@ -214,7 +214,7 @@ public class CrawlingService {
 
         driver.get("https://esports.op.gg/standings/lck");
         WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(100));
-        wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector(".space-y-2")));
+        wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector("div.content.w-full.flex-1.transition-all")));
 
         List<WebElement> tabs = driver.findElements(By.cssSelector(".flex.lg\\:p-1.lg\\:mx-0.mx-3.rounded.bg-gray-800.mb-2 > div"));
 

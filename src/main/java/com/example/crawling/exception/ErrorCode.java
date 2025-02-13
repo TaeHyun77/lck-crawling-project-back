@@ -35,8 +35,11 @@ public enum ErrorCode {
 
     NOT_FOUND_RANKING_DATA("NOT_FOUND_RANKING_DATA", "해당 순위 데이터를 찾을 수 없습니다."),
 
-    NOT_FOUND_FCMTOKEN("NOT_FOUND_FCMTOKEN", "FCM 토큰을 찾을 수 없습니다.");
+    NOT_FOUND_FCMTOKEN("NOT_FOUND_FCMTOKEN", "FCM 토큰을 찾을 수 없습니다."),
 
+    FAILED_TO_SEND_NOTIFICATION_3_HOURS_BEFORE("FAILED_TO SEND_NOTIFICATION_3_HOURS_BEFORE", "경기 3시간 전 알림 전송 실패"),
+
+    FAILED_TO_SEND_NOTIFICATION_24_HOURS_BEFORE("FAILED_TO_SEND_NOTIFICATION_24_HOURS_BEFORE", "경기 24시간 전 알림 전송 실패");
 
     private final String errorCode;
 
