@@ -1,11 +1,9 @@
 package com.example.crawling.crawling;
 
-import com.example.crawling.crawling.Crawling;
 import com.example.crawling.exception.CustomException;
 import com.example.crawling.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.checkerframework.checker.index.qual.SameLen;
 import org.springframework.http.HttpStatus;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
@@ -17,7 +15,7 @@ public class CrawlingScheduler {
 
     private final Crawling crawling;
 
-    @Scheduled(fixedDelay = 60000)
+    @Scheduled(fixedDelay = 60000) // 1분마다 크롤링 진행
     public void scheduleCrawling() {
 
         try {

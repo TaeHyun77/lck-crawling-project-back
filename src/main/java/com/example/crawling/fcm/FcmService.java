@@ -2,8 +2,6 @@ package com.example.crawling.fcm;
 
 import com.example.crawling.exception.CustomException;
 import com.example.crawling.exception.ErrorCode;
-import com.example.crawling.jwt.JwtUtil;
-import com.example.crawling.oauth.CustomOAuth2User;
 import com.example.crawling.schedule.MatchSchedule;
 import com.example.crawling.schedule.MatchScheduleRepository;
 import com.example.crawling.user.User;
@@ -12,17 +10,11 @@ import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.messaging.FirebaseMessagingException;
 import com.google.firebase.messaging.Message;
 import com.google.firebase.messaging.Notification;
-import jakarta.servlet.http.Cookie;
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
-import org.springframework.scheduling.annotation.Async;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import java.time.format.DateTimeFormatter;
-
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -36,9 +28,8 @@ public class FcmService {
 
     private final UserRepository userRepository;
     private final MatchScheduleRepository matchScheduleRepository;
-    private final JwtUtil jwtUtil;
 
-    public String pushUserMatch() {
+    public String pushUserMatch(int param) {
 
         String email = "acd2283@gmail.com";
 
@@ -55,6 +46,7 @@ public class FcmService {
                 .toList();
 
         LocalDateTime now = LocalDateTime.now();
+        LocalDateTime plusHour = now.plusHours(param);
 
         List<MatchSchedule> upcomingMatches = matchScheduleRepository.findByTeam1InOrTeam2In(teamNames, teamNames)
                 .stream()
@@ -72,16 +64,21 @@ public class FcmService {
                         // 경기 시간 변환 (예: "15:00" → LocalTime)
                         LocalTime matchTime = LocalTime.parse(match.getStartTime(), DateTimeFormatter.ofPattern("HH:mm"));
 
-                        // 경기 날짜 + 시간 합쳐서 LocalDateTime 생성
+                        // 경기 날짜 + 시간 합쳐서 LocalDateTime 생성 -> 각 경기의 일정 : yyyy-MM-dd HH:mm
                         LocalDateTime matchDateTime = LocalDateTime.of(matchDate, matchTime);
 
-                        return !matchDateTime.isBefore(now); // 현재 시간 이전이면 제외
+                        // 현재보다 나중의 경기들 & "현재 + 특정 시간" 보다 이전 경기들
+                        return !matchDateTime.isBefore(now) && matchDateTime.isBefore(plusHour);
                     } catch (Exception e) {
                         log.error("날짜 변환 실패! 원본 데이터: " + match.getMatchDate() + " " + match.getStartTime(), e);
                         return false;
                     }
                 })
                 .toList();
+
+        if (upcomingMatches.isEmpty()) {
+            return null;
+        }
 
         String token = user.getFcmToken();
         log.info("fcm token : " + token);
@@ -114,7 +111,19 @@ public class FcmService {
             e.printStackTrace();
             return "Failed to send message";
         }
+    }
 
+    public void registerFcm(FcmRequestDto dto) {
+
+        User user = userRepository.findByEmail(dto.getEmail());
+
+        if (user == null) {
+            throw new CustomException(HttpStatus.BAD_REQUEST, ErrorCode.NOT_FOUND_USER);
+        }
+
+        user.setFcmToken(dto.getFcmToken());
+
+        userRepository.save(user);
     }
 }
 
