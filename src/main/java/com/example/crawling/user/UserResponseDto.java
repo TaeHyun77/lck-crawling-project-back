@@ -31,5 +31,4 @@ public class UserResponseDto {
                 .teamNames(teamNames)
                 .build();
     }
-
 }

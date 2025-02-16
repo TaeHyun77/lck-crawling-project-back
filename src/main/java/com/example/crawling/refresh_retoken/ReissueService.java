@@ -41,13 +41,11 @@ public class ReissueService {
         String username = jwtUtil.getUsername(refresh);
         String role = jwtUtil.getRole(refresh);
 
-        /*
         if (refreshRepository.existsByRefresh(refresh)) {
             refreshRepository.deleteByRefresh(refresh);
         } else {
             log.info("refresh 토큰이 DB에 존재하지 않습니다.");
         }
-        */
 
         String newJwt = jwtUtil.createJwt("access", username, role, 1800000L); // 3시간
         String newRefresh = jwtUtil.createJwt("refresh", username, role, 259200000L); // 3일
