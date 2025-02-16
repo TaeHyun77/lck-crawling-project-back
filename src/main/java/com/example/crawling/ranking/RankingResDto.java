@@ -13,6 +13,4 @@ public class RankingResDto {
     private String record;
 
     private String recordSet;
-
-
 }

@@ -22,15 +22,6 @@ public class Crawling {
             crawlingService.getRanking(driver);
         } catch (CustomException e) {
             throw new CustomException(HttpStatus.BAD_REQUEST, ErrorCode.FAIL_TO_LOAD_DRIVER);
-        } finally {
-            if (driver != null) { // driver가 null인지 확인 후 종료
-                try {
-                    driver.quit();
-                    log.info("WebDriver 종료");
-                } catch (Exception ex) {
-                    log.error("WebDriver 종료 중 오류 발생", ex);
-                }
-            }
         }
     }
 }

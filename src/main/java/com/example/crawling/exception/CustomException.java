@@ -23,6 +23,7 @@ public class CustomException extends RuntimeException{
         this.detail = "";
     }
 
+/*
     public CustomException(HttpStatus status, ErrorCode errorCode, Throwable cause) {
         this.status = status;
         this.errorCode = errorCode;
@@ -53,5 +54,6 @@ public class CustomException extends RuntimeException{
             this.detail = exception.getMessage();
         }
     }
+*/
 
 }
