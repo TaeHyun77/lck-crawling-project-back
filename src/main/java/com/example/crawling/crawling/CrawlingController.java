@@ -9,8 +9,8 @@ import org.springframework.web.bind.annotation.RestController;
 public class CrawlingController {
 
     private final Crawling crawling;
-    @PostMapping("/crawling")
-    public void crawl() {
-        crawling.process();
-    }
+//    @PostMapping("/crawling")
+//    public void crawl() {
+//        crawling.process();
+//    }
 }

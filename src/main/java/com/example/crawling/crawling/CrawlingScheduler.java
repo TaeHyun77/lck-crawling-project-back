@@ -20,7 +20,10 @@ public class CrawlingScheduler {
 
         try {
             log.info("Lck Data 크롤링 작업이 시작되었습니다.");
-            crawling.process();
+
+            // 크롤링이 완료될 때까지 대기
+            crawling.startCrawlingAsync().join();
+
             log.info("Lck Data 크롤링 작업이 완료되었습니다.");
         } catch (CustomException e) {
             log.info("Lck Data 크롤링 작업을 실패하였습니다.");
