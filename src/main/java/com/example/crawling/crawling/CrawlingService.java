@@ -4,9 +4,11 @@ import com.example.crawling.exception.CustomException;
 import com.example.crawling.exception.ErrorCode;
 import com.example.crawling.ranking.Ranking;
 import com.example.crawling.ranking.RankingDto;
+import com.example.crawling.ranking.RankingRedisService;
 import com.example.crawling.ranking.RankingRepository;
 import com.example.crawling.schedule.MatchSchedule;
 import com.example.crawling.schedule.MatchScheduleDto;
+import com.example.crawling.schedule.MatchScheduleRedisService;
 import com.example.crawling.schedule.MatchScheduleRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -33,6 +35,9 @@ public class CrawlingService {
 
     private final MatchScheduleRepository matchScheduleRepository;
     private final RankingRepository rankingRepository;
+    private final MatchScheduleRedisService matchScheduleRedisService;
+    private final RankingRedisService rankingRedisService;
+
 
     // ********** 2월 기준 **********
     public void getDataList(WebDriver driver) {
@@ -168,35 +173,39 @@ public class CrawlingService {
     }
 
     @Transactional
-    public void saveOrUpdateMatchSchedule(MatchSchedule matchSchedule) {
+    public void saveOrUpdateMatchSchedule(MatchSchedule matchSchedule) { // matchSchedule : 새로운 데이터
 
-        Optional<MatchSchedule> existingSchedule;
+        // redis에서 값을 찾음
+        Optional<MatchSchedule> redisSchedule = matchScheduleRedisService.getMatchSchedule(
+                matchSchedule.getMatchDate(), matchSchedule.getStartTime());
 
-        try {
-            existingSchedule = matchScheduleRepository.findByMatchDateAndStartTime(
-                    matchSchedule.getMatchDate(), matchSchedule.getStartTime());
-        } catch (CustomException e) {
-            throw new CustomException(HttpStatus.BAD_REQUEST, ErrorCode.NOT_FOUNT_MATCHSCHEDULE);
+        // 변경 되지 않은 경우
+        if (redisSchedule.isPresent() && !isMatchScheduleChanged(redisSchedule.get(), matchSchedule)) {
+            log.info("변경 없음: " + redisSchedule.get().getMatchDate() + " " + redisSchedule.get().getTeam1() + "-" + redisSchedule.get().getTeam2());
+            return;
         }
+
+        // 변경된 경우 DB 업데이트
+        Optional<MatchSchedule> existingSchedule = matchScheduleRepository.findByMatchDateAndStartTime( // existingSchedule : db에 존재 하는 데이터
+                matchSchedule.getMatchDate(), matchSchedule.getStartTime());
 
         if (existingSchedule.isPresent()) {
             MatchSchedule schedule = existingSchedule.get();
 
-            if (isMatchScheduleChanged(schedule, matchSchedule)) {
-                schedule.updateMatchSchedule(
-                        matchSchedule.getTeam1(), matchSchedule.getTeam2(), matchSchedule.getMatchStatus(),
-                        matchSchedule.getStageType(), matchSchedule.getTeamScore1(), matchSchedule.getTeamScore2()
-                );
+            schedule.updateMatchSchedule(
+                    matchSchedule.getTeam1(), matchSchedule.getTeam2(), matchSchedule.getMatchStatus(),
+                    matchSchedule.getStageType(), matchSchedule.getTeamScore1(), matchSchedule.getTeamScore2(),
+                    matchSchedule.getTeamImg1(), matchSchedule.getTeamImg2());
 
-                matchScheduleRepository.save(schedule);
-                log.info(matchSchedule.getMatchDate() + " " + matchSchedule.getTeam1() + "-" + matchSchedule.getTeam2() + "의 경기 정보가 업데이트 되었습니다.");
-            } else {
-                log.info(matchSchedule.getMatchDate() + " " + matchSchedule.getTeam1() + "-" + matchSchedule.getTeam2() + "의 경기 정보는 변경 되지 않았습니다.");
-            }
+            matchScheduleRepository.save(schedule);
+            log.info("DB 업데이트: " + matchSchedule.getMatchDate() + " " + matchSchedule.getTeam1() + "-" + matchSchedule.getTeam2());
         } else {
             matchScheduleRepository.save(matchSchedule);
-            log.info("새로운 경기 일정 저장");
+            log.info("새로운 경기 일정 DB 저장");
         }
+
+        // Redis 최신화
+        matchScheduleRedisService.getOrUpdateMatchSchedule(matchSchedule.getMatchDate(), matchSchedule.getStartTime());
     }
 
     private boolean isMatchScheduleChanged(MatchSchedule existing, MatchSchedule newSchedule) {
@@ -282,6 +291,15 @@ public class CrawlingService {
     @Transactional
     public void saveOrUpdateRanking(Ranking ranking, String stage) {
 
+        // redis ranking 데이터
+        Optional<Ranking> redisRanking = rankingRedisService.getRanking(stage, ranking.getTeamName());
+
+        // redis 데이터 존재하면
+        if (redisRanking.isPresent() && !isRankingChanged(redisRanking.get(), ranking)) {
+            log.info("변경 없음: " + redisRanking.get().getStage() + " " + redisRanking.get().getTeamName());
+            return;
+        }
+
         Optional<Ranking> existRanking; // DB에 저장된 값
 
         try {
@@ -305,6 +323,8 @@ public class CrawlingService {
             rankingRepository.save(ranking);
             log.info("새로운 순위 저장");
         }
+
+        rankingRedisService.getOrUpdateRanking(ranking.getStage(), ranking.getTeamName());
     }
 
     private boolean isRankingChanged(Ranking existing, Ranking newRanking) {

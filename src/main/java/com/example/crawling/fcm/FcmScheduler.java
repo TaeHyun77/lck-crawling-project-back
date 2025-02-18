@@ -10,14 +10,16 @@ import org.springframework.web.client.RestTemplate;
 
 @Slf4j
 @Service
-public class FcmScheduled {
+public class FcmScheduler {
 
     private final RestTemplate restTemplate = new RestTemplate();
 
     @Scheduled(cron = "0 10 * * * *") // 매 시간 10분에 실행 -> 경기 시작 3시간 전부터 1시간 마다 알림
     public void sendPushNotification3Before() {
 
-        String url = "http://localhost:8080/push/notification?param=3";
+        log.info("알림 전송");
+
+        String url = "http://localhost:8080/push/notification?param=48";
 
         try {
             String response = restTemplate.postForObject(url, null, String.class);

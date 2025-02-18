@@ -45,6 +45,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
                     .name(oAuth2Response.getName())
                     .email(oAuth2Response.getEmail())
                     .role("ROLE_USER")
+                    .notificationPermission(false)
                     .build();
 
             userRepository.save(userDto.toUser());

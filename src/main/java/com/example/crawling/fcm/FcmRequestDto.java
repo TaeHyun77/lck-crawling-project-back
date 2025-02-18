@@ -11,4 +11,6 @@ public class FcmRequestDto {
 
     private String email;
 
+    private String notificationPermission;
+
 }

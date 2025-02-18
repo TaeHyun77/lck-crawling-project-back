@@ -1,5 +1,7 @@
 package com.example.crawling.user;
 
+import com.example.crawling.exception.CustomException;
+import com.example.crawling.exception.ErrorCode;
 import com.example.crawling.jwt.JwtUtil;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
@@ -46,6 +48,20 @@ public class UserService {
         } catch (Exception e) {
             return new ResponseEntity<>("UNAUTHORIZED", HttpStatus.UNAUTHORIZED);
         }
+    }
+
+    public void notificationPermission(UserNotificationDto dto) {
+
+        User user = userRepository.findByEmail(dto.getEmail());
+
+        if (user == null) {
+            throw new CustomException(HttpStatus.BAD_REQUEST, ErrorCode.NOT_FOUND_USER);
+        }
+
+        user.setNotificationPermission(dto.isNotificationPermission());
+
+        userRepository.save(user);
+
     }
 
     public ResponseEntity<String> googleLogout(HttpServletRequest request, HttpServletResponse response) {

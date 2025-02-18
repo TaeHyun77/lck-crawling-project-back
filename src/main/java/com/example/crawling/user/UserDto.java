@@ -17,12 +17,15 @@ public class UserDto {
 
     private List<String> teamName;
 
+    private boolean notificationPermission;
+
     @Builder
-    public UserDto(String username, String name, String email, String role) {
+    public UserDto(String username, String name, String email, String role, boolean notificationPermission) {
         this.username = username;
         this.name = name;
         this.email = email;
         this.role = role;
+        this.notificationPermission = notificationPermission;
     }
 
     public User toUser() {
@@ -31,6 +34,7 @@ public class UserDto {
                 .name(name)
                 .email(email)
                 .role(role)
+                .notificationPermission(notificationPermission)
                 .build();
     }
 }

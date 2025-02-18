@@ -6,15 +6,11 @@ import io.github.bonigarcia.wdm.WebDriverManager;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpStatus;
 
-@Configuration
-public class WebDriverConfig {
+public class WebDriverFactory {
 
-    @Bean
-    public WebDriver webDriver() {
+    public static WebDriver createWebDriver() {
 
         try {
 
@@ -41,4 +37,5 @@ public class WebDriverConfig {
             throw new CustomException(HttpStatus.BAD_REQUEST, ErrorCode.FAIL_TO_SETTING_DRIVER);
         }
     }
+
 }
