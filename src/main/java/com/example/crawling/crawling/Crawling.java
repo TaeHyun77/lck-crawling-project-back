@@ -22,13 +22,17 @@ import java.util.concurrent.CompletableFuture;
 @Configuration
 public class Crawling {
 
+    //private final WebDriver driver;
+
     private final CrawlingService crawlingService;
-    private final Object crawlingLock = new Object();
+    private final Object crawlingLock = new Object(); // 스레드 동기화를 위한 lock 객체
     private boolean isCrawling = false;
 
     @Async
     public CompletableFuture<Void> startCrawlingAsync() {
 
+        // startCrawlingAsync()가 동시에 여러 번 실행되지 않도록 보장하는 것
+        // crawlingLock 쓰지 않고 매개변수에 this로 변경해도 됨
         synchronized (crawlingLock) {
             if (isCrawling) {
                 log.info("이미 크롤링이 진행 중입니다. 요청을 스킵합니다.");
@@ -68,17 +72,21 @@ public class Crawling {
                 CompletableFuture.allOf(futures.toArray(new CompletableFuture[0])).join();
 
             } finally {
-                synchronized (crawlingLock) {
-                    isCrawling = false;
-                }
+                isCrawling = false;
             }
         });
     }
 
+    // 테스트 코드에서 isCrawling을 초기화 하기 위함
+    public void resetCrawlingState() {
+        synchronized (crawlingLock) {
+            isCrawling = false;
+            log.info("isCrawling 상태 초기화 완료!");
+        }
+    }
 
 
-
-
+//    // 동기적으로 실행한 크롤링
 //    public void process() {
 //        try {
 //            crawlingService.getDataList(driver);
