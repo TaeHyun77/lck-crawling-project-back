@@ -21,7 +21,7 @@ class CrawlingTest {
         log.info("=== 동기 크롤링 테스트 시작 ===");
         Instant start = Instant.now();
 
-        crawling.process(); // 동기 실행
+        //crawling.process(); // 동기 실행
 
         Instant end = Instant.now();
         Duration duration = Duration.between(start, end);

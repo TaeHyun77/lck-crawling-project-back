@@ -33,7 +33,7 @@ public class FcmScheduler {
     @Scheduled(cron = "0 0 0 * * *")  // 매일 00:00 실행 -> 오늘 있는 경기 목록 푸시 알람
     public void sendPushNotification24Before() {
 
-        String url = "http://localhost:8080/push/notification?param=24";
+        String url = "http://localhost:8080/push/notification?param=48";
 
         try {
             String response = restTemplate.postForObject(url, null, String.class);

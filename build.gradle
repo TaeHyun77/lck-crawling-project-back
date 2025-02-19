@@ -60,6 +60,10 @@ dependencies {
 	testCompileOnly 'org.projectlombok:lombok'
 	testAnnotationProcessor 'org.projectlombok:lombok'
 
+	// 테스트용 DB
+	testImplementation group: 'com.h2database', name: 'h2', version: '2.2.220'
+
+
 }
 
 tasks.named('test') {
