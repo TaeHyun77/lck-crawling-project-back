@@ -7,6 +7,6 @@ import org.springframework.transaction.annotation.Transactional;
 public interface RefreshRepository extends JpaRepository<Refresh, Long> {
     Boolean existsByRefresh(String refresh);
 
-    @Transactional(isolation = Isolation.SERIALIZABLE)
+    @Transactional
     void deleteByRefresh(String refresh);
 }
