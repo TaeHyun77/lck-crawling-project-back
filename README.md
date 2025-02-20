@@ -6,9 +6,9 @@
 불편하여 사이트 제작
 
 # 사용 기술
-BackEnd : SpringBoot, Spring Data Jpa
-FrontEnd : React.js
-DataBase : MySQl , redis
+- BackEnd : SpringBoot, Spring Data Jpa
+- FrontEnd : React.js
+- DataBase : MySQl , redis
 
 # 기능
 - Oauth를 통한 구글 로그인
