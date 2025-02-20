@@ -25,5 +25,6 @@
 
 # 페이지 
 - 홈 페이지
+  <img width="1153" alt="Image" src="https://github.com/user-attachments/assets/a099cc24-ad1a-42d5-99d5-1271b063bd55" />
 
 
