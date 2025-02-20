@@ -8,7 +8,7 @@
 # 사용 기술
 - BackEnd : SpringBoot, Spring Data Jpa
 - FrontEnd : React.js
-- DataBase : MySQl , redis
+- DataBase : MySQL , Redis
 
 # 기능
 - Oauth를 통한 구글 로그인
@@ -20,7 +20,7 @@
 # 개선 여부
 - 일정, 순위 데이터 크롤링 시간 단축을 위해 redis를 활용한 캐싱으로 시간 단축 
 - 일정 데이터, 순위 데이터를 동기적으로 크롤링 함으로써 시간 소요가 심하기에 ComfortableFure를 통한 비동기 크롤링 실행
-=> ( 크롤링 10번 기준 ) 동기 : 11,190ms , 비동기 : 7,408ms -> 시간 소요 약 33.8% 감소
+=> ( 크롤링 10번 평균 ) 동기 : 11,190ms , 비동기 : 7,408ms -> 시간 소요 약 33.8% 감소
 - React.js interceptor를 통한 jwt 토큰 재발급
 
 # 페이지 
