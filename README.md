@@ -28,3 +28,8 @@
   <img width="1153" alt="Image" src="https://github.com/user-attachments/assets/a099cc24-ad1a-42d5-99d5-1271b063bd55" />
 - 순위 페이지
 ![Image](https://github.com/user-attachments/assets/5f10ab26-a258-48a0-9b32-3ea15cd7d72a)
+- 알림 기능
+  <img width="1288" alt="Image" src="https://github.com/user-attachments/assets/1d524cdc-6856-4490-9a73-3c35889e459a" />
+
+# DB 
+![Image](https://github.com/user-attachments/assets/48657990-8fff-42e9-9c1f-dd46c848f3e6)
