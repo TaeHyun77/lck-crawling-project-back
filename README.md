@@ -26,5 +26,5 @@
 # 페이지 
 - 홈 페이지
   <img width="1153" alt="Image" src="https://github.com/user-attachments/assets/a099cc24-ad1a-42d5-99d5-1271b063bd55" />
-
-
+- 순위 페이지
+![Image](https://github.com/user-attachments/assets/5f10ab26-a258-48a0-9b32-3ea15cd7d72a)
