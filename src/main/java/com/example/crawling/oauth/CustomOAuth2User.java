@@ -60,6 +60,10 @@ public class CustomOAuth2User implements OAuth2User, UserDetails {
         return user.getUsername();
     }
 
+    public boolean getNotification() {
+        return user.isNotificationPermission();
+    }
+
     @Override
     public boolean isAccountNonExpired() {
         return UserDetails.super.isAccountNonExpired();

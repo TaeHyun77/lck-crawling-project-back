@@ -17,11 +17,14 @@ public class CustomException extends RuntimeException{
         this.detail = detail;
     }
 
+
+
     public CustomException(HttpStatus status, ErrorCode errorCode) {
         this.status = status;
         this.errorCode = errorCode;
         this.detail = "";
     }
+
 
 /*
     public CustomException(HttpStatus status, ErrorCode errorCode, Throwable cause) {

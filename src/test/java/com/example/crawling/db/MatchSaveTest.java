@@ -19,6 +19,7 @@ import org.springframework.test.context.TestPropertySource;
 
 
 // 실제 DB와 분리된 인 메모리 H2 데이터베이스를 사용하여 JPA 기능 테스트
+// user와 month 가 h2에서는 예약어이기 때문에 변경 해줘야 함
 @Slf4j
 @AutoConfigureTestDatabase(connection = EmbeddedDatabaseConnection.H2, replace = AutoConfigureTestDatabase.Replace.ANY)
 @TestPropertySource("classpath:application-test.properties")

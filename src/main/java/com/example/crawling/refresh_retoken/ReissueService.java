@@ -4,6 +4,7 @@ import com.example.crawling.exception.CustomException;
 import com.example.crawling.exception.ErrorCode;
 import com.example.crawling.jwt.JwtUtil;
 import com.example.crawling.refresh_retoken.RefreshRepository;
+import jakarta.persistence.OptimisticLockException;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -11,7 +12,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -41,11 +44,7 @@ public class ReissueService {
         String username = jwtUtil.getUsername(refresh);
         String role = jwtUtil.getRole(refresh);
 
-        if (refreshRepository.existsByRefresh(refresh)) {
-            refreshRepository.deleteByRefresh(refresh);
-        } else {
-            log.info("refresh 토큰이 DB에 존재하지 않습니다.");
-        }
+        deleteRefreshToken(refresh);
 
         String newJwt = jwtUtil.createJwt("access", username, role, 1800000L); // 3시간
         String newRefresh = jwtUtil.createJwt("refresh", username, role, 259200000L); // 3일
@@ -56,6 +55,19 @@ public class ReissueService {
         response.addCookie(createCookie("refreshAuthorization", newRefresh));
 
         return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @Transactional
+    public void deleteRefreshToken(String refresh) {
+        try {
+            refreshRepository.findByRefresh(refresh)
+                    .ifPresentOrElse(refreshRepository::delete,
+                            () -> log.info("Refresh 토큰이 DB에 존재하지 않습니다."));
+
+        } catch (ObjectOptimisticLockingFailureException | OptimisticLockException e) {
+            log.warn("낙관적 락 충돌 발생! 다른 요청이 먼저 삭제 되었습니다.");
+            throw new CustomException(HttpStatus.CONFLICT, ErrorCode.OPTIMISTICLOCKING, "다른 요청이 먼저 Refresh 토큰을 삭제했습니다. 다시 시도하세요.");
+        }
     }
 
     private Cookie createCookie(String key, String value) {
