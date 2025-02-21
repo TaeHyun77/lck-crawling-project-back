@@ -22,13 +22,17 @@ public class UserResponseDto {
 
     private List<String> teamNames;
 
-    public static UserResponseDto of(String username,String role, String name, String email, List<String> teamNames) {
+    private boolean notificationPermission;
+
+
+    public static UserResponseDto of(String username,String role, String name, String email, List<String> teamNames, boolean notificationPermission) {
         return UserResponseDto.builder()
                 .username(username)
                 .role(role)
                 .name(name)
                 .email(email)
                 .teamNames(teamNames)
+                .notificationPermission(notificationPermission)
                 .build();
     }
 }

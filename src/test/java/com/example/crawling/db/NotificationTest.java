@@ -65,7 +65,7 @@ public class NotificationTest {
                 .build();
 
         // 만료되지 않은 fcm 토큰 값 작성 해야 함
-        testUser.setFcmToken("e_41W2F9y6aW3Rtnh_fmR6:APA91bGM7u9sHwcNULIxxpWcobS5z7MK9kh--HMAH0jp6fbAZSm8vn2oiWqlyhw38fuvSBeI8tJhLMHi8w96sbptJIYrSMhmxgp_U0mwLbz3vLJ4b_5slWY");
+        testUser.setFcmToken("e_41W2F9y6aW3Rtnh_fmR6:APA91bFs8ksu7euY-Yn9jmqalZyXesL7LT5li0p1eHudLRtrdNXQ1Tvy5_txzCOBLrmgNSO_udllXmKecIjvH8sHk7-Awkz0Vog7PYxIfuATHNBPwKOIZtI");
 
         // User 저장
         userRepository.save(testUser);
@@ -102,7 +102,7 @@ public class NotificationTest {
         MatchSchedule testMatchSchedule = MatchSchedule.builder()
                 .month(2)
                 .matchDate("02월 19일 (수)")
-                .startTime("23:00")
+                .startTime("23:45")
                 .team1("T1")
                 .team2("kt 롤스터")
                 .matchStatus("예정")
@@ -132,6 +132,6 @@ public class NotificationTest {
         Assertions.assertEquals(user.getEmail(), "test7777@kakao.com", "email 다릅니다.");
 
         Assertions.assertEquals(matchSchedule.getMatchDate(), "02월 19일 (수)", "matchDate가 다릅니다.");
-        Assertions.assertEquals(matchSchedule.getStartTime(), "23:00", "startTime이 다릅니다.");
+        Assertions.assertEquals(matchSchedule.getStartTime(), "23:45", "startTime이 다릅니다.");
     }
 }

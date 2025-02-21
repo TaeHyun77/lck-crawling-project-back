@@ -42,7 +42,9 @@ public class UserService {
                     .map(userTeamMap -> userTeamMap.getTeam().getTeamName())
                     .toList();
 
-            UserResponseDto info = UserResponseDto.of(username, role, name, email, teamNames);
+            boolean notificationPermission = user.isNotificationPermission();
+
+            UserResponseDto info = UserResponseDto.of(username, role, name, email, teamNames, notificationPermission);
 
             return new ResponseEntity<>(info, HttpStatus.OK);
         } catch (Exception e) {

@@ -19,7 +19,7 @@ public class FcmScheduler {
 
         log.info("알림 전송");
 
-        String url = "http://localhost:8080/push/notification?param=48";
+        String url = "http://localhost:8080/push/notification?param=3";
 
         try {
             String response = restTemplate.postForObject(url, null, String.class);
@@ -30,10 +30,10 @@ public class FcmScheduler {
         }
     }
 
-    @Scheduled(cron = "0 0 0 * * *")  // 매일 00:00 실행 -> 오늘 있는 경기 목록 푸시 알람
+    @Scheduled(cron = "0 49 13 * * *")  // 매일 00:00 실행 -> 오늘 있는 경기 목록 푸시 알람
     public void sendPushNotification24Before() {
 
-        String url = "http://localhost:8080/push/notification?param=48";
+        String url = "http://localhost:8080/push/notification?param=24";
 
         try {
             String response = restTemplate.postForObject(url, null, String.class);
