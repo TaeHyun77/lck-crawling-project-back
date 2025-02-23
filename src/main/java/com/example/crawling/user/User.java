@@ -29,7 +29,7 @@ public class User extends BaseTime {
 
     private String role;
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<UserTeamMap> userTeamMap = new ArrayList<>();
 
     private String fcmToken;
