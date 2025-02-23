@@ -25,6 +25,7 @@ public class TeamService {
     @Transactional
     public void saveTeamName(String username, List<String> selectedTeams) {
 
+        // user가 선호하는 팀 목록을 모두 삭제하고
         User user;
 
         try {
@@ -36,7 +37,6 @@ public class TeamService {
         List<UserTeamMap> existingUserTeams = userTeamMapRepository.findByUser(user);
 
         userTeamMapRepository.deleteByUserId(user.getId());
-        userTeamMapRepository.flush();
 
         for (UserTeamMap userTeamMap : existingUserTeams) {
             Team team = userTeamMap.getTeam();
@@ -46,6 +46,7 @@ public class TeamService {
             }
         }
 
+        // 다시 들어온 선호 하는 팀 목록으로 변경하는 것
         for (String teamName : selectedTeams) {
             Team team = teamRepository.findByTeamName(teamName)
                     .orElseGet(() -> {
