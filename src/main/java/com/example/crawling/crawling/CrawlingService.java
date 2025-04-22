@@ -39,21 +39,21 @@ public class CrawlingService {
     private final RankingRedisService rankingRedisService;
 
 
-    // ********** 2월 기준 **********
+    // ********** 4월 기준 **********
     public void getDataList(WebDriver driver) {
 
         LocalDate currentDate = LocalDate.now();
         int month = currentDate.getMonthValue();
         log.info("현재 크롤링 월 : " + month);
 
-        // 현재 월 데이터 크롤링 ( 2월꺼 )
+        // 현재 월 데이터 크롤링 ( month 월꺼 )
         driver.get("https://game.naver.com/esports/League_of_Legends/schedule/lck");
         crawlScheduleData(driver, month);
 
-        // 다음 월 데이터 크롤링 ( 1월꺼 , 한 번만 실행 )
+        // 다음 월 데이터 크롤링 ( 5월꺼 , 한 번만 실행 )
         WebElement unselectedMonths = driver.findElement(By.cssSelector("a[data-selected='false']"));
 
-        // 다른 월의 일정 url ( 1월꺼 )
+        // 다른 월의 일정 url ( 5월꺼 )
         String nextMonthHref = unselectedMonths.getAttribute("href");
 
         String nextMonthText = unselectedMonths.findElement(By.cssSelector("span")).getText();
@@ -221,23 +221,21 @@ public class CrawlingService {
 
     public void getRanking(WebDriver driver) {
 
-        driver.get("https://esports.op.gg/standings/lck");
+        driver.get("https://game.naver.com/esports/League_of_Legends/home");
         WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(100));
-        wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector("div.content.w-full.flex-1.transition-all")));
+        wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector("div.ranking_group_table__3ktgw")));
 
-        List<WebElement> tabs = driver.findElements(By.cssSelector(".flex.lg\\:p-1.lg\\:mx-0.mx-3.rounded.bg-gray-800.mb-2 > div"));
+        List<WebElement> tabs = driver.findElements(By.cssSelector("div.ranking_group__1q_o1"));
 
         for (WebElement tab : tabs) {
 
             tab.click();
 
-            wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector(".dark\\:border-gray-900.border-t.border-gray-200.cursor-pointer.lg\\:h-12.h-10.hover\\:bg-gray-200.dark\\:bg-gray-800.dark\\:hover\\:bg-gray-850.border-t-gray-900")));
+            wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector(".ranking_item_row__2P7f8")));
 
-            List<WebElement> dataList = driver.findElements(By.cssSelector(".dark\\:border-gray-900.border-t.border-gray-200.cursor-pointer.lg\\:h-12.h-10.hover\\:bg-gray-200.dark\\:bg-gray-800.dark\\:hover\\:bg-gray-850.border-t-gray-900"));
+            List<WebElement> dataList = driver.findElements(By.cssSelector(".ranking_item_row__2P7f8"));
 
             for (WebElement webElement : dataList) {
-
-                String stage = tab.getText();
 
                 String all = webElement.getText();
                 String[] parts = all.split("\n");

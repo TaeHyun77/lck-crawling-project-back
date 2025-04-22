@@ -23,6 +23,7 @@ public class WebDriverFactory {
             options.addArguments("--start-maximized"); // 창 최대화
             options.addArguments("--disable-gpu"); // GPU 가속 비활성화
             options.addArguments("--disable-cache", "--disable-application-cache", "--disk-cache-size=0"); // 캐시 비활성화
+            options.addArguments("--no-sandbox");
 
             // user-agent를 사용하여 탐지를 피함
             // user-agent : 웹 브라우저나 클라이언트가 서버와 통신할 때 자신의 정보를 포함하여 보내는 HTTP 요청 헤더 값

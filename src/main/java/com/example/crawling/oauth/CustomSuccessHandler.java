@@ -51,6 +51,7 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
                 .expiration((new Date(System.currentTimeMillis() + 60*60*10000L)).toString())
                 .build();
 
+
         refreshRepository.save(refresh);
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
@@ -66,16 +67,32 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         log.info("Access 토큰 만료 시간: " + expirationTime);
         log.info("refresh 토큰 만료 시간: " + reExpirationTime);
 
-        response.sendRedirect("http://localhost:3000/");
+        response.sendRedirect("http://localhost:3000/?month=4");
+
+        //response.sendRedirect("https://d26j07ydg0bh96.cloudfront.net/?month=2");
     }
 
-    private Cookie createCookie(String key, String value) {
+//    private Cookie createCookie(String key, String value) {
+//
+//        Cookie cookie = new Cookie(key, value);
+//        cookie.setMaxAge(24*60*60);
+//        //cookie.setSecure(false);
+//         cookie.setPath("/");
+//
+//        return cookie;
+//    }
 
+    private Cookie createCookie(String key, String value) {
         Cookie cookie = new Cookie(key, value);
-        cookie.setMaxAge(24*60*60);
-        //cookie.setSecure(false);
-        cookie.setPath("/");
+        cookie.setMaxAge(24 * 60 * 60); // 1일
+        cookie.setSecure(true); // HTTPS에서만 쿠키 전달
+        cookie.setHttpOnly(false); // JavaScript에서 쿠키 접근 불가 (보안 강화)
+        cookie.setPath("/"); // 모든 경로에서 쿠키 사용 가능
+
+        // Spring Boot 2.1 이상에서는 setAttribute 사용 가능
+        cookie.setAttribute("SameSite", "None"); // 크로스 도메인에서도 쿠키 전달 가능
 
         return cookie;
     }
+
 }

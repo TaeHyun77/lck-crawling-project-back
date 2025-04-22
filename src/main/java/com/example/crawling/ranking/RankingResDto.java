@@ -2,7 +2,7 @@ package com.example.crawling.ranking;
 
 public class RankingResDto {
 
-    private String stage;
+    private Long id;
 
     private int teamRank;
 
@@ -10,7 +10,11 @@ public class RankingResDto {
 
     private String teamName;
 
-    private String record;
+    private int winCnt;
 
-    private String recordSet;
+    private int loseCnt;
+
+    private double winRate;
+
+    private int pointDiff;
 }

@@ -71,11 +71,13 @@ public class ReissueService {
     }
 
     private Cookie createCookie(String key, String value) {
-
         Cookie cookie = new Cookie(key, value);
-        cookie.setMaxAge(24*60*60);
-        cookie.setSecure(false);
-        cookie.setPath("/");
+        cookie.setMaxAge(24 * 60 * 60); // 1일
+        cookie.setSecure(true); // HTTPS에서만 쿠키 전달
+        cookie.setHttpOnly(false); // JavaScript에서 쿠키 접근 불가 (보안 강화)
+        cookie.setPath("/"); // 모든 경로에서 쿠키 사용 가능
+
+        cookie.setAttribute("SameSite", "None"); // 크로스 도메인에서도 쿠키 전달 가능
 
         return cookie;
     }

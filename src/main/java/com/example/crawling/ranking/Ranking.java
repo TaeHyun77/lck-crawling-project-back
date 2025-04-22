@@ -20,31 +20,36 @@ public class Ranking extends BaseTime {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String stage;
-
     private int teamRank;
 
     private String img;
 
     private String teamName;
 
-    private String record;
+    private int winCnt;
 
-    private String recordSet;
+    private int loseCnt;
+
+    private double winRate;
+
+    private int pointDiff;
 
     @Builder
-    public Ranking(String stage, int teamRank, String img, String teamName, String record, String recordSet) {
-        this.stage = stage;
+    public Ranking(int teamRank, String img, String teamName, int winCnt, int loseCnt, double winRate, int pointDiff) {
         this.teamRank = teamRank;
         this.img = img;
         this.teamName = teamName;
-        this.record = record;
-        this.recordSet = recordSet;
+        this.winCnt = winCnt;
+        this.loseCnt = loseCnt;
+        this.winRate = winRate;
+        this.pointDiff = pointDiff;
     }
 
-    public void updateRanking(int teamRank, String record, String recordSet) {
+    public void updateRanking(int teamRank, int winCnt, int loseCnt, double winRate, int pointDiff) {
         this.teamRank = teamRank;
-        this.record = record;
-        this.recordSet = recordSet;
+        this.winCnt = winCnt;
+        this.loseCnt = loseCnt;
+        this.winRate = winRate;
+        this.pointDiff = pointDiff;
     }
 }
