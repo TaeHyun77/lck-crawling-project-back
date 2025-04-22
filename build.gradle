@@ -63,9 +63,16 @@ dependencies {
 	// 테스트용 DB
 	testImplementation group: 'com.h2database', name: 'h2', version: '2.2.220'
 
-
 }
 
 tasks.named('test') {
 	useJUnitPlatform()
+}
+
+sourceSets {
+	test {
+		java {
+			srcDirs = ['src/test/java']
+		}
+	}
 }

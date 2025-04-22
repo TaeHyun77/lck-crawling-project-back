@@ -1,10 +1,11 @@
 package com.example.crawling.crawling;
 
 public record RankingData(
-        String stage,
         int teamRank,
         String img,
         String teamName,
-        String record,
-        String recordSet
+        int winCnt,
+        int loseCnt,
+        double winRate,
+        int pointDiff
 ){}
