@@ -4,7 +4,7 @@
 ## 목적 
 선호하는 팀의 경기 일정과 순위를 확인하기 위해 여러 사이트를 일일이 방문해야 하는 불편함을 해소하고자 이 서비스를 개발
 
-# 사용 기술
+## 사용 기술
 - BackEnd : SpringBoot, Spring Data Jpa
 - FrontEnd : React.js
 - DataBase : MySQL , Redis
