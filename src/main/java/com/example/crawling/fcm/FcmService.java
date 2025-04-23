@@ -71,6 +71,7 @@ public class FcmService {
                     .toList();
 
             if (upcomingMatches.isEmpty()) {
+                log.info("예정된 경기 일정이 없습니다.");
                 return null;
             }
 
