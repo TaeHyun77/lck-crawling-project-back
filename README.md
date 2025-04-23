@@ -9,6 +9,7 @@
 - BackEnd : SpringBoot, Spring Data Jpa
 - FrontEnd : React.js
 - DataBase : MySQL , Redis
+- ETC : Firebase
 
 # 기능
 - Oauth를 통한 구글 로그인
