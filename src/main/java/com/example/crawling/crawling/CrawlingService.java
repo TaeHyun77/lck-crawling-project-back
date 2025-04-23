@@ -220,66 +220,50 @@ public class CrawlingService {
 
 
     public void getRanking(WebDriver driver) {
-
         driver.get("https://game.naver.com/esports/League_of_Legends/home");
-        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(100));
-        wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector("div.ranking_group_table__3ktgw")));
 
-        List<WebElement> tabs = driver.findElements(By.cssSelector("div.ranking_group__1q_o1"));
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(20));
+        wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector(".ranking_group_table__3ktgw")));
 
-        for (WebElement tab : tabs) {
+        List<WebElement> rankingGroups = driver.findElements(By.cssSelector(".ranking_group__1q_o1"));
 
-            tab.click();
+        for (WebElement group : rankingGroups) {
+            // 그룹 내의 팀 랭킹 행들
+            List<WebElement> rows = group.findElements(By.cssSelector(".ranking_item_row__2P7f8"));
 
-            wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector(".ranking_item_row__2P7f8")));
-
-            List<WebElement> dataList = driver.findElements(By.cssSelector(".ranking_item_row__2P7f8"));
-
-            for (WebElement webElement : dataList) {
-
-                String all = webElement.getText();
-                String[] parts = all.split("\n");
-
-                // 순위
-                int teamRank = Integer.parseInt(parts[0]);
-
-                // 이미지
-                WebElement imgElement = webElement.findElement(By.cssSelector(".flex.items-center.text-t2 img"));
-                String img = imgElement.getAttribute("src");
-
-                // 팀 명
-                WebElement teamNameElement = webElement.findElement(By.cssSelector(".flex.items-center.text-t2 span"));
-                String teamName = teamNameElement.getText();
-
-                // 승패
-                WebElement recordElement = webElement.findElement(By.cssSelector(".whitespace-nowrap"));
-                String record = recordElement.getText().split("\\d+%")[0].trim();
-
-                // 세트당 승패
-                String recordSet = parts[3].replaceAll("(\\d+W \\d+L).*", "$1");
-
-                RankingData rankingData = new RankingData(
-                        stage,
-                        teamRank,
-                        img,
-                        teamName,
-                        record,
-                        recordSet
-                );
-
+            for (WebElement row : rows) {
                 try {
-                    RankingDto rankingDto = RankingDto.builder()
-                            .stage(rankingData.stage())
-                            .teamRank(rankingData.teamRank())
-                            .img(rankingData.img())
-                            .teamName(rankingData.teamName())
-                            .record(rankingData.record())
-                            .recordSet(rankingData.recordSet())
+                    // 순위
+                    int teamRank = Integer.parseInt(row.findElement(By.cssSelector(".ranking_rank__1YjIT")).getText().trim());
+
+                    // 이미지 URL
+                    String img = row.findElement(By.cssSelector("img.ranking_image__1fTV-")).getAttribute("src");
+
+                    // 팀명
+                    String teamName = row.findElement(By.cssSelector(".ranking_text__3Q3qr")).getText().trim();
+
+                    // 승/패/승률/득실차 값들
+                    List<WebElement> stats = row.findElements(By.cssSelector("td.ranking_item__rMCiZ > span.ranking_num___owTL"));
+
+                    int winCnt = Integer.parseInt(stats.get(0).getText().trim());
+                    int loseCnt = Integer.parseInt(stats.get(1).getText().trim());
+                    double winRate = Double.parseDouble(stats.get(2).getText().trim());
+                    int pointDiff = Integer.parseInt(stats.get(3).getText().trim());
+
+                    Ranking ranking = Ranking.builder()
+                            .teamRank(teamRank)
+                            .img(img)
+                            .teamName(teamName)
+                            .winCnt(winCnt)
+                            .loseCnt(loseCnt)
+                            .winRate(winRate)
+                            .pointDiff(pointDiff)
                             .build();
 
-                    saveOrUpdateRanking(rankingDto.toRanking(), stage);
-                } catch (CustomException e) {
-                    log.info("랭킹 데이터 DB 저장 실패 !");
+                    saveOrUpdateRanking(ranking);
+
+                } catch (Exception e) {
+                    log.warn("랭킹 정보 파싱 중 오류 발생: " + e.getMessage(), e);
                     throw new CustomException(HttpStatus.BAD_REQUEST, ErrorCode.FAIL_TO_STORE_RANKING_DATA);
                 }
             }
@@ -287,47 +271,50 @@ public class CrawlingService {
     }
 
     @Transactional
-    public void saveOrUpdateRanking(Ranking ranking, String stage) {
+    public void saveOrUpdateRanking(Ranking ranking) {
 
         // redis ranking 데이터
-        Optional<Ranking> redisRanking = rankingRedisService.getRanking(stage, ranking.getTeamName());
+        Optional<Ranking> redisRanking = rankingRedisService.getRanking(ranking.getTeamName());
 
         // redis 데이터 존재하면
         if (redisRanking.isPresent() && !isRankingChanged(redisRanking.get(), ranking)) {
-            log.info("변경 없음: " + redisRanking.get().getStage() + " " + redisRanking.get().getTeamName());
+            log.info(redisRanking.get().getTeamName() + "의 순위 데이터 변경 없음");
             return;
         }
 
         Optional<Ranking> existRanking; // DB에 저장된 값
 
         try {
-            existRanking = rankingRepository.findByTeamNameAndStage(ranking.getTeamName(), stage);
+            existRanking = rankingRepository.findByTeamName(ranking.getTeamName());
         } catch (CustomException e) {
             throw new CustomException(HttpStatus.BAD_REQUEST, ErrorCode.NOT_FOUND_RANKING_DATA);
         }
 
+        // DB에 랭킹 데이터가 존재하면
         if (existRanking.isPresent()) {
             Ranking rankingData = existRanking.get();
 
-            if (isRankingChanged(rankingData, ranking)) {
-                rankingData.updateRanking(ranking.getTeamRank(), ranking.getRecord(), ranking.getRecordSet());
+                if (isRankingChanged(rankingData, ranking)) { // ( 기존 데이터, 새 데이터 )
+                rankingData.updateRanking(ranking.getTeamRank(), ranking.getWinCnt(), ranking.getLoseCnt(), ranking.getWinRate(), ranking.getPointDiff());
 
                 rankingRepository.save(rankingData);
-                log.info(stage + " " + rankingData.getTeamName() + " 의 순위 정보가 업데이트 되었습니다.");
+                log.info(rankingData.getTeamName() + " 의 순위 정보가 업데이트 되었습니다.");
             } else {
-                log.info(stage + " " + rankingData.getTeamName() + " 의 순위 정보가 업데이트 되지 않았습니다.");
+                log.info(rankingData.getTeamName() + " 의 순위 정보가 업데이트 되지 않았습니다.");
             }
         } else {
             rankingRepository.save(ranking);
             log.info("새로운 순위 저장");
         }
 
-        rankingRedisService.getOrUpdateRanking(ranking.getStage(), ranking.getTeamName());
+        rankingRedisService.getOrUpdateRanking(ranking.getTeamName());
     }
 
     private boolean isRankingChanged(Ranking existing, Ranking newRanking) {
         return existing.getTeamRank() != newRanking.getTeamRank() ||
-                !existing.getRecord().equals(newRanking.getRecord()) ||
-                !existing.getRecordSet().equals(newRanking.getRecordSet());
+                existing.getWinCnt() != newRanking.getWinCnt() ||
+                existing.getLoseCnt() != newRanking.getLoseCnt() ||
+                existing.getWinRate() != newRanking.getWinRate() ||
+                existing.getPointDiff() != newRanking.getPointDiff();
     }
 }
