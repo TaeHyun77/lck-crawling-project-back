@@ -23,9 +23,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.time.Duration;
 import java.time.LocalDate;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 
 
 @Slf4j
@@ -38,42 +36,55 @@ public class CrawlingService {
     private final MatchScheduleRedisService matchScheduleRedisService;
     private final RankingRedisService rankingRedisService;
 
-
-    // ********** 4월 기준 **********
     public void getDataList(WebDriver driver) {
 
-        LocalDate currentDate = LocalDate.now();
-        int month = currentDate.getMonthValue();
-        log.info("현재 크롤링 월 : " + month);
-
-        // 현재 월 데이터 크롤링 ( month 월꺼 )
         driver.get("https://game.naver.com/esports/League_of_Legends/schedule/lck");
-        crawlScheduleData(driver, month);
 
-        // 다음 월 데이터 크롤링 ( 5월꺼 , 한 번만 실행 )
-        WebElement unselectedMonths = driver.findElement(By.cssSelector("a[data-selected='false']"));
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(20));
+        wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector(".schedule_calendar_list_month__1VIHT")));
 
-        // 다른 월의 일정 url ( 5월꺼 )
-        String nextMonthHref = unselectedMonths.getAttribute("href");
+        List<WebElement> allMonthElements = driver.findElements(By.cssSelector("a.schedule_calendar_month__2mWJA"));
+        Set<Integer> targetMonths = Set.of(1, 2, 4, 5, 6, 7, 8);
 
-        String nextMonthText = unselectedMonths.findElement(By.cssSelector("span")).getText();
-        log.info("다음 월 데이터: " + nextMonthText); // "1월"과 같은 형식
+        // WebElement 대신 정보를 저장할 DTO 리스트
+        List<MonthLinkInfo> monthLinkInfos = new ArrayList<>();
 
-        int other_month = Integer.parseInt(nextMonthText.replace("월", ""));
+        for (WebElement monthElement : allMonthElements) {
+            try {
+                String href = monthElement.getAttribute("href");
+                String monthText = monthElement.findElement(By.cssSelector("span")).getText();
+                int month = Integer.parseInt(monthText.replace("월", ""));
 
-        if (!matchScheduleRepository.existsByMonth(other_month)) {
-            log.info(nextMonthText + " 크롤링 시작!");
+                monthLinkInfos.add(new MonthLinkInfo(href, month));
+            } catch (Exception e) {
+                log.warn("월 정보 파싱 중 오류 발생 - 건너뜀", e);
+            }
+        }
 
-            driver.manage().deleteAllCookies();
-            driver.get(nextMonthHref);
+        for (MonthLinkInfo info : monthLinkInfos) {
+            int month = info.getMonth();
+            String href = info.getHref();
 
-            // 강제 새로 고침
-            JavascriptExecutor jsExecutor = (JavascriptExecutor) driver;
-            jsExecutor.executeScript("location.reload();");
+            if (!targetMonths.contains(month)) {
+                log.info(month + "월은 크롤링 대상이 아님 - 건너뜀");
+                continue;
+            }
 
-            crawlScheduleData(driver, other_month);
-        } else {
-            log.info(nextMonthText + " 이미 크롤링 완료된 데이터입니다.");
+            boolean shouldCrawl = month == 4 || !matchScheduleRepository.existsByMonth(month);
+
+            if (shouldCrawl) {
+                log.info(month + "월 크롤링 시작!");
+
+                driver.manage().deleteAllCookies();
+                driver.get(href);
+
+                JavascriptExecutor jsExecutor = (JavascriptExecutor) driver;
+                jsExecutor.executeScript("location.reload();");
+
+                crawlScheduleData(driver, month);
+            } else {
+                log.info(month + "월은 이미 크롤링됨 - 건너뜀");
+            }
         }
     }
 
@@ -217,7 +228,6 @@ public class CrawlingService {
                 !Objects.equals(existing.getTeamImg1(), newSchedule.getTeamImg1()) ||
                 !Objects.equals(existing.getTeamImg2(), newSchedule.getTeamImg2());
     }
-
 
     public void getRanking(WebDriver driver) {
         driver.get("https://game.naver.com/esports/League_of_Legends/home");
