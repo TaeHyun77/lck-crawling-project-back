@@ -6,6 +6,6 @@ import java.util.Optional;
 
 public interface RankingRepository extends JpaRepository<Ranking, Long> {
 
-    Optional<Ranking> findByTeamNameAndStage(String teamName, String stage);
+    Optional<Ranking> findByTeamName(String teamName);
 
 }
