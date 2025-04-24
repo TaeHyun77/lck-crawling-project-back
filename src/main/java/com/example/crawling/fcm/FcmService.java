@@ -36,11 +36,17 @@ public class FcmService {
                 .filter(user -> user.getFcmToken() != null && !user.getFcmToken().isEmpty())
                 .toList();
 
+        log.info("#### users.size: " + users.size());
+
+        List<String> results = new ArrayList<>();
+
         for (User user : users) {
 
             List<String> teamNames = user.getUserTeamMap().stream()
                     .map(userTeamMap -> userTeamMap.getTeam().getTeamName())
                     .toList();
+
+            log.info("#### teamNames.size: " + teamNames.size());
 
             List<MatchSchedule> upcomingMatches = matchScheduleRepository.findByTeam1InOrTeam2In(teamNames, teamNames)
                     .stream()
@@ -71,8 +77,8 @@ public class FcmService {
                     .toList();
 
             if (upcomingMatches.isEmpty()) {
-                log.info("예정된 경기 일정이 없습니다.");
-                return null;
+                log.info(user.getName() + "님이 선호하는 예정된 경기 일정이 없습니다.");
+                continue;
             }
 
             String token = user.getFcmToken();
@@ -98,16 +104,23 @@ public class FcmService {
                     .build();
 
             try {
-                // 메시지 전송
                 String response = FirebaseMessaging.getInstance().send(message);
 
-                return "Message sent successfully: " + response;
+                results.add("Message sent successfully to " + user.getId() + ": " + response);
             } catch (FirebaseMessagingException e) {
-                e.printStackTrace();
-                return "Failed to send message";
+
+                if (e.getMessagingErrorCode() == MessagingErrorCode.UNREGISTERED) {
+                    // 만료된 토큰은 삭제 처리
+                    log.warn(user.getEmail() + "님의 유효하지 않은 토큰 발견 (삭제 처리 진행)");
+                    user.setFcmToken("deleted");
+                    userRepository.save(user);
+                } else {
+                    results.add("Failed to send message to " + user.getId() + ": " + e.getMessage());
+                }
             }
+
         }
-        return null;
+        return String.join("\n", results);
     }
 
     public void registerFcm(FcmRequestDto dto) {

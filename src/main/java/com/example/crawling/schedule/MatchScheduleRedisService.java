@@ -40,7 +40,7 @@ public class MatchScheduleRedisService {
             return redisSchedule;
         }
 
-        // redis에 값 존재할 시
+        // redis에 값이 없다면 DB애서 데이터 가져옴
 
         Optional<MatchSchedule> dbSchedule = matchScheduleRepository.findByMatchDateAndStartTime(matchDate, startTime);
 

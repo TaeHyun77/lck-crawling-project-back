@@ -12,7 +12,7 @@ public class RankingController {
     private final RankingService rankingService;
 
     @GetMapping("/ranking")
-    public List<Ranking> getRanking() {
+    public List<RankingResponseDto> getRanking() {
         return rankingService.getAllRanking();
     }
 }

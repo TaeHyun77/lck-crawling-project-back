@@ -3,11 +3,10 @@ package com.example.crawling.crawling;
 import com.example.crawling.exception.CustomException;
 import com.example.crawling.exception.ErrorCode;
 import com.example.crawling.ranking.Ranking;
-import com.example.crawling.ranking.RankingDto;
 import com.example.crawling.ranking.RankingRedisService;
 import com.example.crawling.ranking.RankingRepository;
 import com.example.crawling.schedule.MatchSchedule;
-import com.example.crawling.schedule.MatchScheduleDto;
+import com.example.crawling.schedule.MatchScheduleRequestDto;
 import com.example.crawling.schedule.MatchScheduleRedisService;
 import com.example.crawling.schedule.MatchScheduleRepository;
 import lombok.RequiredArgsConstructor;
@@ -22,9 +21,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.time.Duration;
-import java.time.LocalDate;
 import java.util.*;
-
 
 @Slf4j
 @RequiredArgsConstructor
@@ -56,8 +53,9 @@ public class CrawlingService {
                 int month = Integer.parseInt(monthText.replace("월", ""));
 
                 monthLinkInfos.add(new MonthLinkInfo(href, month));
-            } catch (Exception e) {
+            } catch (CustomException e) {
                 log.warn("월 정보 파싱 중 오류 발생 - 건너뜀", e);
+                throw new CustomException(HttpStatus.BAD_REQUEST, ErrorCode.ERROR_TO_PARSING_MONTH);
             }
         }
 
@@ -160,7 +158,7 @@ public class CrawlingService {
                 );
 
                 try {
-                    MatchScheduleDto scheduleDto = MatchScheduleDto.builder()
+                    MatchScheduleRequestDto scheduleDto = MatchScheduleRequestDto.builder()
                             .month(month)
                             .matchDate(scheduleData.date())
                             .startTime(scheduleData.startTime())
@@ -176,7 +174,7 @@ public class CrawlingService {
 
                     saveOrUpdateMatchSchedule(scheduleDto.toEntity());
                 } catch (CustomException e) {
-                    log.info("경기 일정 DB 저장 실패 !");
+                    log.warn("경기 일정 DB 저장 실패 !", e);
                     throw new CustomException(HttpStatus.BAD_REQUEST, ErrorCode.FAIL_TO_STORE_SCHEDULE_DATA);
                 }
             }

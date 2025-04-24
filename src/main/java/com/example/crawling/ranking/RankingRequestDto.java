@@ -3,11 +3,10 @@ package com.example.crawling.ranking;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.checkerframework.checker.units.qual.N;
 
 @NoArgsConstructor
 @Getter
-public class RankingDto {
+public class RankingRequestDto {
 
     private int teamRank;
 
@@ -24,7 +23,7 @@ public class RankingDto {
     private int pointDiff;
 
     @Builder
-    public RankingDto(int teamRank, String img, String teamName, int winCnt, int loseCnt, double winRate, int pointDiff) {
+    public RankingRequestDto(int teamRank, String img, String teamName, int winCnt, int loseCnt, double winRate, int pointDiff) {
         this.teamRank = teamRank;
         this.img = img;
         this.teamName = teamName;
