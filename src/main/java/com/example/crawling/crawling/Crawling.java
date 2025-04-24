@@ -23,6 +23,7 @@ import java.util.concurrent.CompletableFuture;
 public class Crawling {
 
     private final CrawlingService crawlingService;
+    private final WebDriver driver; // 동기적 크롤링 용도
 
     @Async
     public CompletableFuture<Void> startCrawlingAsync() {
@@ -63,13 +64,13 @@ public class Crawling {
         });
     }
 
-//    // 동기적으로 실행한 크롤링
-//    public void process() {
-//        try {
-//            crawlingService.getDataList(driver);
-//            crawlingService.getRanking(driver);
-//        } catch (CustomException e) {
-//            throw new CustomException(HttpStatus.BAD_REQUEST, ErrorCode.FAIL_TO_LOAD_DRIVER);
-//        }
-//    }
+    // 동기적으로 실행한 크롤링
+    public void process() {
+        try {
+            crawlingService.getDataList(driver);
+            crawlingService.getRanking(driver);
+        } catch (CustomException e) {
+            throw new CustomException(HttpStatus.BAD_REQUEST, ErrorCode.FAIL_TO_LOAD_DRIVER);
+        }
+    }
 }

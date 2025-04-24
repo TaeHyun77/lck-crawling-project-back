@@ -8,7 +8,7 @@ import java.util.List;
 
 @Getter
 @Setter
-public class UserDto {
+public class UserRequestDto {
 
     private String username;
     private String name;
@@ -20,7 +20,7 @@ public class UserDto {
     private boolean notificationPermission;
 
     @Builder
-    public UserDto(String username, String name, String email, String role, boolean notificationPermission) {
+    public UserRequestDto(String username, String name, String email, String role, boolean notificationPermission) {
         this.username = username;
         this.name = name;
         this.email = email;

@@ -1,7 +1,7 @@
 package com.example.crawling.oauth;
 
 import com.example.crawling.user.User;
-import com.example.crawling.user.UserDto;
+import com.example.crawling.user.UserRequestDto;
 import com.example.crawling.user.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -40,7 +40,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
         if (findUser == null) {
 
-            UserDto userDto = UserDto.builder()
+            UserRequestDto userRequestDto = UserRequestDto.builder()
                     .username(username)
                     .name(oAuth2Response.getName())
                     .email(oAuth2Response.getEmail())
@@ -48,9 +48,9 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
                     .notificationPermission(false)
                     .build();
 
-            userRepository.save(userDto.toUser());
+            userRepository.save(userRequestDto.toUser());
 
-            return new CustomOAuth2User(userDto.toUser(), oAuth2User.getAttributes());
+            return new CustomOAuth2User(userRequestDto.toUser(), oAuth2User.getAttributes());
         } else {
             log.info(username + ", 이미 가입한 사용자입니다.");
             user = findUser;
