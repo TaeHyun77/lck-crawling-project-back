@@ -23,7 +23,7 @@
   → ( 크롤링 10번 평균 ) 동기 : 11,190ms , 비동기 : 7,408ms -> 시간 소요 약 33.8% 감소<br><br>
 - React.js interceptor를 통한 jwt 토큰 재발급
 
-## 페이지 
+## 페이지 ( 4/20 업데이트)
 - 홈 페이지
   <img width="1153" alt="Image" src="https://github.com/user-attachments/assets/a099cc24-ad1a-42d5-99d5-1271b063bd55" />
 - 순위 페이지
