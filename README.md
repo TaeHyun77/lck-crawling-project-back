@@ -25,16 +25,20 @@
 
 ## 페이지 ( 4/20 업데이트)
 - 홈 페이지
-  <img width="1383" alt="Image" src="https://github.com/user-attachments/assets/4ea4f242-e241-41b2-8622-672adf2a3612" /><br>
+  <img width="1383" alt="Image" src="https://github.com/user-attachments/assets/4ea4f242-e241-41b2-8622-672adf2a3612" /><br><br>
 
 - 순위 페이지
-  <img src="https://github.com/user-attachments/assets/20da48ee-5ca3-4e8f-91c3-1b44c31eff7f"><br>
+  <img src="https://github.com/user-attachments/assets/20da48ee-5ca3-4e8f-91c3-1b44c31eff7f"><br><br>
 
 - 로그인 시 화면
-  <img width="1382" alt="Image" src="https://github.com/user-attachments/assets/f535ae0d-63af-4044-bfbc-3438b012860c" /><br>
+  선호하는 팀 선택 가능, 선호하는 팀의 경기를 필터링 해서 볼 수 있음<br>
+  <img width="1382" alt="Image" src="https://github.com/user-attachments/assets/f535ae0d-63af-4044-bfbc-3438b012860c" /><br><br>
 
 - 알림 기능
-  <img width="1288" alt="Image" src="https://github.com/user-attachments/assets/1d524cdc-6856-4490-9a73-3c35889e459a" /><br>
+  알림 허용 기능을 구현하여 사용자 임의대로 수정 가능
+  알림 허용의 경우 FCM을 통해 크롬 알림 구현
+  <br>
+  <img width="1288" alt="Image" src="https://github.com/user-attachments/assets/1d524cdc-6856-4490-9a73-3c35889e459a" /><br><br>
 
 ## DB 
 ![Image](https://github.com/user-attachments/assets/48657990-8fff-42e9-9c1f-dd46c848f3e6)
