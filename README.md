@@ -6,7 +6,7 @@
 
 ## 사용 기술
 - BackEnd : SpringBoot, Spring Data Jpa
-- FrontEnd : React.js
+- FrontEnd : React.js, JavaScript
 - DataBase : MySQL , Redis
 - ETC : Firebase
 
