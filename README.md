@@ -25,11 +25,19 @@
 
 ## 페이지 ( 4/20 업데이트)
 - 홈 페이지
-  <img width="1153" alt="Image" src="https://github.com/user-attachments/assets/a099cc24-ad1a-42d5-99d5-1271b063bd55" />
+  <img width="1383" alt="Image" src="https://github.com/user-attachments/assets/4ea4f242-e241-41b2-8622-672adf2a3612" /><br>
+
 - 순위 페이지
-![Image](https://github.com/user-attachments/assets/5f10ab26-a258-48a0-9b32-3ea15cd7d72a)
+  <img src="https://github.com/user-attachments/assets/20da48ee-5ca3-4e8f-91c3-1b44c31eff7f"><br>
+
+- 로그인 시 화면
+  <img width="1382" alt="Image" src="https://github.com/user-attachments/assets/f535ae0d-63af-4044-bfbc-3438b012860c" /><br>
+
 - 알림 기능
-  <img width="1288" alt="Image" src="https://github.com/user-attachments/assets/1d524cdc-6856-4490-9a73-3c35889e459a" />
+  <img width="1288" alt="Image" src="https://github.com/user-attachments/assets/1d524cdc-6856-4490-9a73-3c35889e459a" /><br>
 
 ## DB 
 ![Image](https://github.com/user-attachments/assets/48657990-8fff-42e9-9c1f-dd46c848f3e6)
+
+
+
