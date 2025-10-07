@@ -34,12 +34,12 @@
   <img src="https://github.com/user-attachments/assets/20da48ee-5ca3-4e8f-91c3-1b44c31eff7f"><br><br>
 
 - 로그인 시 화면<br>
-  선호하는 팀 선택 가능, 선호하는 팀의 경기를 필터링 해서 볼 수 있음<br>
+  선호하는 팀을 선택 가능하며, 선호하는 팀의 경기를 필터링 해서 볼 수 있습니다.<br>
   <img width="1382" alt="Image" src="https://github.com/user-attachments/assets/f535ae0d-63af-4044-bfbc-3438b012860c" /><br><br>
 
 - 알림 기능<br>
-  알림 허용 기능을 구현하여 사용자 임의대로 수정 가능<br>
-  알림 허용의 경우 FCM을 통해 크롬 알림 구현<br>
+  알림 허용 기능을 구현하여 사용자 임의대로 알림 허용 여부 선택이 가능합니다.<br>
+  알림은 FCM을 통해 크롬 알림으로 구현했습니다.<br>
   <br>
   <img width="1288" alt="Image" src="https://github.com/user-attachments/assets/1d524cdc-6856-4490-9a73-3c35889e459a" /><br><br>
 
