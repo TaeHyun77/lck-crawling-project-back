@@ -11,9 +11,7 @@ import org.springframework.http.HttpStatus;
 public class WebDriverFactory {
 
     public static WebDriver createWebDriver() {
-
         try {
-
             // 크롬 버전에 맞는 driver 자동 설치
             WebDriverManager.chromedriver().setup();
 

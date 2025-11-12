@@ -10,8 +10,6 @@ import java.util.Optional;
 
 public interface MatchScheduleRepository extends JpaRepository<MatchSchedule, Long> {
 
-    boolean existsByMonth(int month);
-
     Optional<MatchSchedule> findByMatchDateAndStartTime(String matchDate, String startTime);
 
     List<MatchSchedule> findByTeam1InOrTeam2In(List<String> team1, List<String> team2);

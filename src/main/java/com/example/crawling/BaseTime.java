@@ -1,4 +1,4 @@
-package com.example.crawling.config;
+package com.example.crawling;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
