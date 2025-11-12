@@ -1,6 +1,6 @@
 package com.example.crawling.user;
 
-import com.example.crawling.config.BaseTime;
+import com.example.crawling.BaseTime;
 import com.example.crawling.team.UserTeamMap;
 import jakarta.persistence.*;
 import lombok.Builder;

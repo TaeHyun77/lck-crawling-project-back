@@ -1,6 +1,6 @@
 package com.example.crawling.schedule;
 
-import com.example.crawling.config.BaseTime;
+import com.example.crawling.BaseTime;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
