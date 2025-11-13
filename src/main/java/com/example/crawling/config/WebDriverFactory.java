@@ -36,5 +36,4 @@ public class WebDriverFactory {
             throw new CustomException(HttpStatus.BAD_REQUEST, ErrorCode.FAIL_TO_SETTING_DRIVER);
         }
     }
-
 }

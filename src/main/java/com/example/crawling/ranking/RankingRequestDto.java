@@ -21,27 +21,4 @@ public class RankingRequestDto {
     private double winRate;
 
     private int pointDiff;
-
-    @Builder
-    public RankingRequestDto(int teamRank, String img, String teamName, int winCnt, int loseCnt, double winRate, int pointDiff) {
-        this.teamRank = teamRank;
-        this.img = img;
-        this.teamName = teamName;
-        this.winCnt = winCnt;
-        this.loseCnt = loseCnt;
-        this.winRate = winRate;
-        this.pointDiff = pointDiff;
-    }
-
-    public Ranking toRanking() {
-        return Ranking.builder()
-                .teamRank(teamRank)
-                .img(img)
-                .teamName(teamName)
-                .winCnt(winCnt)
-                .loseCnt(loseCnt)
-                .winRate(winRate)
-                .pointDiff(pointDiff)
-                .build();
-    }
 }

@@ -51,9 +51,6 @@ dependencies {
 
 	implementation "org.springframework.boot:spring-boot-starter-aop" // aop
 
-	implementation 'org.springframework.boot:spring-boot-starter-data-redis' // redis
-
-
 	implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310'
 	implementation 'com.fasterxml.jackson.core:jackson-databind'
 

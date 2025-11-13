@@ -8,12 +8,12 @@ import java.util.List;
 
 @RequiredArgsConstructor
 @RestController
-public class ScheduleController {
+public class MatchScheduleController {
 
-    private final MatchService matchService;
+    private final MatchScheduleService matchScheduleService;
 
     @GetMapping("/schedules")
     public List<MatchScheduleResponseDto> getSchedule() {
-        return matchService.getAllSchedule();
+        return matchScheduleService.getAllSchedule();
     }
 }
