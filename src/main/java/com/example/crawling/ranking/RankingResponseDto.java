@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 
+@Builder
 @Getter
 @AllArgsConstructor
 public class RankingResponseDto {
@@ -24,14 +25,5 @@ public class RankingResponseDto {
 
     private int pointDiff;
 
-    @Builder
-    public RankingResponseDto(int teamRank, String img, String teamName, int winCnt, int loseCnt, double winRate, int pointDiff) {
-        this.teamRank = teamRank;
-        this.img = img;
-        this.teamName = teamName;
-        this.winCnt = winCnt;
-        this.loseCnt = loseCnt;
-        this.winRate = winRate;
-        this.pointDiff = pointDiff;
-    }
+    private String matchGroup;
 }

@@ -34,7 +34,6 @@ public class Ranking extends BaseTime {
 
     private int pointDiff;
 
-
     @Builder
     public Ranking(String matchGroup, int teamRank, String img, String teamName, int winCnt, int loseCnt, double winRate, int pointDiff) {
         this.matchGroup = matchGroup;
