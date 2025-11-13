@@ -23,6 +23,8 @@ public enum ErrorCode {
 
     FAIL_TO_SETTING_DRIVER("FAIL_TO_SETTING_DRIVER", "드라이버 세팅을 실패하였습니다."),
 
+    FAIL_TO_INIT_FCM("FAIL_TO_INIT_FCM", "FCM 초기화에 실패하였습니다."),
+
     EXPIRED_TOKEN("EXPIRED_TOKEN", "토큰이 만료되었습니다."),
 
     INVALID_REFRESH_TOKEN("INVALID_REFRESH_TOKEN", "유효한 refresh 토큰이 아닙니다."),

@@ -34,32 +34,35 @@ public class MatchScheduleService {
         driver.get("https://game.naver.com/esports/League_of_Legends/schedule/lck");
 
         // 경기가 있는 달 정보를 담을 리스트
-        Map<Integer, String> monthLinkInfos = extractActiveMonth(driver);
+        Map<Integer, String> monthInfos = extractActiveMonth(driver);
 
         // 현재 달 구하기
         LocalDate today = LocalDate.now();
-
         int currentMonth = 9; // today.getMonthValue(); 현재는 LCK 안해서 9월로 임의 지정
 
-        for (int month: monthLinkInfos.keySet()) {
+        for (int month: monthInfos.keySet()) {
             if (month != currentMonth) {
-                log.info("{}월 데이터는 이번 달 데이터가 아닙니다.", month);
-            } else {
-                driver.get(monthLinkInfos.get(currentMonth));
+                log.info("{}월 - 이번 달이 아니므로 크롤링을 건너뜁니다.", month);
+                continue;
+            }
 
-                try {
-                    log.info("{}월의 일정 정보를 크롤링합니다.", currentMonth);
-                    scrapeMonthlySchedule(driver, currentMonth);
-                    log.info("{}월의 일정 정보를 크롤링이 완료되었습니다.", currentMonth);
-                } catch (Exception e) {
-                    log.info("LCK 일정 크롤링 실패");
-                    throw new CustomException(HttpStatus.BAD_REQUEST, ErrorCode.FAIL_TO_CRAWLING_LCK_DATA);
-                }
+            try {
+                driver.get(monthInfos.get(month));
+
+                log.info("{}월의 일정 정보를 크롤링합니다.", month);
+                scrapeMonthlySchedule(driver, month);
+                log.info("{}월의 일정 정보를 크롤링이 완료되었습니다.", month);
+            } catch (Exception e) {
+                log.info("LCK 일정 크롤링 실패");
+                throw new CustomException(HttpStatus.BAD_REQUEST, ErrorCode.FAIL_TO_CRAWLING_LCK_DATA);
             }
         }
+
     }
 
     private void scrapeMonthlySchedule(WebDriver driver, int currentMonth)  {
+
+        log.info(String.valueOf(currentMonth));
 
         WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(100));
 
@@ -152,7 +155,7 @@ public class MatchScheduleService {
         // 갱신 되었다면 변경
         if (isMatchScheduleChanged(dbMatchSchedule, crawlingMatchSchedule)) {
             dbMatchSchedule.updateMatchSchedule(
-                    crawlingMatchSchedule.getTeam1(), crawlingMatchSchedule.getTeam2(),
+                    crawlingMatchSchedule.getMonth(), crawlingMatchSchedule.getTeam1(), crawlingMatchSchedule.getTeam2(),
                     crawlingMatchSchedule.getMatchStatus(), crawlingMatchSchedule.getStageType(),
                     crawlingMatchSchedule.getTeamScore1(), crawlingMatchSchedule.getTeamScore2(),
                     crawlingMatchSchedule.getTeamImg1(), crawlingMatchSchedule.getTeamImg2()
@@ -165,7 +168,8 @@ public class MatchScheduleService {
 
     // 일정 정보가 수정되었는지 여부
     private boolean isMatchScheduleChanged(MatchSchedule existing, MatchSchedule newSchedule) {
-        return !existing.getStartTime().equals(newSchedule.getStartTime()) ||
+        return  existing.getMonth() != newSchedule.getMonth() ||
+                !existing.getStartTime().equals(newSchedule.getStartTime()) ||
                 !existing.getMatchStatus().equals(newSchedule.getMatchStatus()) ||
                 !existing.getStageType().equals(newSchedule.getStageType()) ||
                 !existing.getTeamScore1().equals(newSchedule.getTeamScore1()) ||

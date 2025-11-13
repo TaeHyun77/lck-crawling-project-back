@@ -53,7 +53,8 @@ public class MatchSchedule extends BaseTime {
         this.teamImg2 = teamImg2;
     }
 
-    public void updateMatchSchedule(String team1, String team2, String matchStatus, String stageType, String teamScore1, String teamScore2, String teamImg1, String teamImg2) {
+    public void updateMatchSchedule(int month, String team1, String team2, String matchStatus, String stageType, String teamScore1, String teamScore2, String teamImg1, String teamImg2) {
+        this.month = month;
         this.team1 = team1;
         this.team2 = team2;
         this.matchStatus = matchStatus;
