@@ -54,11 +54,8 @@ public class UserService {
 
     public void notificationPermission(UserNotificationDto dto) {
 
-        User user = userRepository.findByEmail(dto.getEmail());
-
-        if (user == null) {
-            throw new CustomException(HttpStatus.BAD_REQUEST, ErrorCode.NOT_FOUND_USER);
-        }
+        User user = userRepository.findByEmail(dto.getEmail())
+                .orElseThrow(() -> new CustomException(HttpStatus.BAD_REQUEST, ErrorCode.NOT_FOUND_USER));
 
         user.setNotificationPermission(dto.isNotificationPermission());
 
