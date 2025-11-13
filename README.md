@@ -6,24 +6,34 @@
 
 ### 기술 스택
 ---
-- BackEnd : SpringBoot, Spring Data Jpa<br><br>
-- FrontEnd : React.js, JavaScript<br><br>
-- DataBase : MySQL , Redis<br><br>
+- BackEnd : SpringBoot, Spring Data Jpa
+  
+- FrontEnd : React.js, JavaScript
+  
+- DataBase : MySQL , Redis
+  
 - ETC : Firebase<br><br>
 
 ### 기능
 ---
-- Oauth를 통한 소셜 로그인<br><br>
-- 월 별 경기 일정 파악 ( 네이버 e 스포츠 크롤링 )<br><br>
-- Lck 팀들의 순위 파악 ( OP.GG LCK 크롤링 )<br><br>
-- 선호하는 팀 선택 <br><br>
+- Oauth를 통한 소셜 로그인
+  
+- 월 별 경기 일정 파악 ( 네이버 e 스포츠 크롤링 )
+  
+- Lck 팀들의 순위 파악 ( OP.GG LCK 크롤링 )
+  
+- 선호하는 팀 선택
+  
 - Fcm 알림 서비스를 통해 선호하는 팀의 경기 알림 기능 제공 ( 자정에 한 번, 경기 일정 3시간 전부터 1시간마다 )<br><br>
+
 
 ### 개선 여부
 ---
-- 일정, 순위 데이터 크롤링 시간 단축을 위해 redis를 활용한 캐싱으로 시간 단축 <br><br>
-- 일정 데이터, 순위 데이터를 동기적으로 크롤링 함으로써 시간 소요가 심하기에 CompletableFuture 통한 비동기 크롤링 실행<br><br>
+- 일정, 순위 데이터 크롤링 시간 단축을 위해 redis를 활용한 캐싱으로 시간 단축
+  
+- 일정 데이터, 순위 데이터를 동기적으로 크롤링 함으로써 시간 소요가 심하기에 CompletableFuture 통한 비동기 크롤링 실행
   ( 크롤링 10번 평균 ) 동기 : 11,190ms , 비동기 : 7,408ms -> 시간 소요 약 33.8% 감소<br><br>
+  
 
 ### 페이지
 ---
