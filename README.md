@@ -31,21 +31,20 @@
 ---  
 - LCK 일정, LCK 순위 데이터를 동기적으로 크롤링하면 불필요한 시간이 소요되므로 CompletableFuture을 사용하여 비동기적으로 크롤링 실행하여 문제를 해결하였습니다.<br>
   ( 크롤링 10번 평균 ) 동기 : 11,190ms , 비동기 : 7,408ms -> 시간 소요 약 33.8% 감소<br><br>
-  
 
 ### 페이지
 ---
 **[ 홈 페이지 ]**<br><br>
-<img width="1383" alt="Image" src="https://github.com/user-attachments/assets/4ea4f242-e241-41b2-8622-672adf2a3612" width=600/><br><br>
+<img width="1710" height="922" alt="Image" src="https://github.com/user-attachments/assets/02cce9de-e574-4154-9193-f67b5936071f" /><br><br>
 
 **[ 순위 페이지 ]**<br><br>
-<img src="https://github.com/user-attachments/assets/20da48ee-5ca3-4e8f-91c3-1b44c31eff7f"><br><br>
+<img width="1710" height="804" alt="Image" src="https://github.com/user-attachments/assets/68beafa7-081d-4938-b0d2-6f7ab88eeb7a" /><br><br>
 
 **[ 로그인 시 화면 ]**<br>
 선호하는 팀을 선택 가능하며, 선호하는 팀의 경기를 필터링 해서 볼 수 있습니다.<br><br>
-<img width="1382" alt="Image" src="https://github.com/user-attachments/assets/f535ae0d-63af-4044-bfbc-3438b012860c" /><br><br>
+<img width="1710" height="804" alt="Image" src="https://github.com/user-attachments/assets/29a6e814-a42b-4a31-b390-1e28ffd6c0aa" /><br><br>
 
 **[ 알림 기능 ]**<br>
 알림 허용 기능을 구현하여 사용자 임의대로 알림 허용 여부 선택이 가능합니다.<br>
 알림은 FCM을 사용하여 크롬 알림으로 구현했습니다.<br><br>
-<img width="1288" alt="Image" src="https://github.com/user-attachments/assets/1d524cdc-6856-4490-9a73-3c35889e459a" /><br><br>
+<img width="1710" height="804" alt="Image" src="https://github.com/user-attachments/assets/e9f7b38a-1a22-41c3-bf58-7bf58f5cc905" /><br><br>
