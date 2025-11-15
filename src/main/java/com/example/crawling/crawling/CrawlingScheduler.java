@@ -4,9 +4,12 @@ import com.example.crawling.exception.CustomException;
 import com.example.crawling.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.aspectj.lang.annotation.Around;
 import org.springframework.http.HttpStatus;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
+
+import java.util.concurrent.Future;
 
 @RequiredArgsConstructor
 @Slf4j
@@ -29,3 +32,4 @@ public class CrawlingScheduler {
         }
     }
 }
+

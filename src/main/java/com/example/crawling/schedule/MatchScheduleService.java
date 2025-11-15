@@ -42,7 +42,7 @@ public class MatchScheduleService {
 
         for (int month: monthInfos.keySet()) {
             if (month != currentMonth) {
-                log.info("{}월 - 이번 달이 아니므로 크롤링을 건너뜁니다.", month);
+                // log.info("{}월 - 이번 달이 아니므로 크롤링을 건너뜁니다.", month);
                 continue;
             }
 

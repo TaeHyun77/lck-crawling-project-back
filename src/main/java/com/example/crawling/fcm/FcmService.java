@@ -173,8 +173,8 @@ public class FcmService {
     private void sendFcmMessage(User user, Message message, List<String> results) {
         try {
             String response = FirebaseMessaging.getInstance().send(message);
-            log.info("message : "  + message);
-            log.info("response : " + response);
+            log.info("message : {}", message);
+            log.info("response : {}", response);
 
             results.add(user.getId() + "님에게 알림을 성공적으로 발송하였습니다. ");
         } catch (FirebaseMessagingException e) {
