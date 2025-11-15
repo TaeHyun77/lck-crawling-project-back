@@ -44,12 +44,4 @@ public class User extends BaseTime {
         this.role = role;
         this.notificationPermission = notificationPermission;
     }
-
-    public void updateFcmToken(String fcmToken) {
-        this.fcmToken = fcmToken;
-    }
-
-    public void updateNotificationPermission(boolean notificationPermission) {
-        this.notificationPermission = notificationPermission;
-    }
 }

@@ -15,7 +15,7 @@ public class TeamController {
 
     @PostMapping("/team")
     public void receiveTeams(@RequestBody TeamRequestDto req) {
-        log.info("받은 팀 리스트: " + req.getUsername() + " , " +  req.getSelectedTeams());
+        log.info("받은 팀 리스트: {} , {}", req.getUsername(), req.getSelectedTeams());
 
         teamService.saveTeamName(req.getUsername(), req.getSelectedTeams());
     }

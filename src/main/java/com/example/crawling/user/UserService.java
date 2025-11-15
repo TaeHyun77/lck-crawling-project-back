@@ -22,6 +22,9 @@ public class UserService {
     private final JwtUtil jwtUtil;
     private final UserRepository userRepository;
 
+    /*
+    * 특정 사용자 정보 조회
+    * */
     public ResponseEntity<?> userInfo(String token) {
 
         try {
@@ -33,7 +36,8 @@ public class UserService {
             String username = jwtUtil.getUsername(token);
             String role = jwtUtil.getRole(token);
 
-            User user = userRepository.findByUsername(username);
+            User user = userRepository.findByUsername(username)
+                    .orElseThrow(() -> new CustomException(HttpStatus.BAD_REQUEST, ErrorCode.NOT_FOUND_USER));
 
             String name = user.getName();
             String email = user.getEmail();
@@ -52,6 +56,9 @@ public class UserService {
         }
     }
 
+    /*
+    * 사용자 알림 허용 여부 변경
+    * */
     public void notificationPermission(UserNotificationDto dto) {
 
         User user = userRepository.findByEmail(dto.getEmail())

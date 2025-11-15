@@ -11,5 +11,4 @@ public class TeamRequestDto {
 
     private String username;
     private List<String> selectedTeams;
-
 }

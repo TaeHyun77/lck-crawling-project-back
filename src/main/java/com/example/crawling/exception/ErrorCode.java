@@ -19,17 +19,15 @@ public enum ErrorCode {
 
     FAIL_TO_CRAWLING_SCHEDULING("FAIL_TO_CRAWLING_SCHEDULING", "스케줄링 크롤링 실패"),
 
-    FAIL_TO_CRAWLING("FAIL_TO_CRAWLING", "크롤링 실패"),
-
     FAIL_TO_SETTING_DRIVER("FAIL_TO_SETTING_DRIVER", "드라이버 세팅을 실패하였습니다."),
-
-    FAIL_TO_INIT_FCM("FAIL_TO_INIT_FCM", "FCM 초기화에 실패하였습니다."),
 
     EXPIRED_TOKEN("EXPIRED_TOKEN", "토큰이 만료되었습니다."),
 
     INVALID_REFRESH_TOKEN("INVALID_REFRESH_TOKEN", "유효한 refresh 토큰이 아닙니다."),
 
     NOT_FOUND_USER("NOT_FOUND_USER", "유저를 찾을 수 없습니다."),
+
+    NOT_FOUND_TEAM("NOT_FOUND_TEAM", "팀을 찾을 수 없습니다."),
 
     NOT_FOUND_FCMTOKEN("NOT_FOUND_FCMTOKEN", "FCM 토큰을 찾을 수 없습니다."),
 
