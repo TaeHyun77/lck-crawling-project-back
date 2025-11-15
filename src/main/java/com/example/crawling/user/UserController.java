@@ -26,6 +26,9 @@ public class UserController {
 
     private final UserService userService;
 
+    /*
+    * 특정 유저 정보 조회
+    * */
     @GetMapping("/info")
     public ResponseEntity<?> userInfo(HttpServletRequest request) {
 
@@ -40,6 +43,9 @@ public class UserController {
         return userService.userInfo(token);
     }
 
+    /*
+    * 사용자 알림 허용 여부 변경
+    * */
     @PostMapping("/user/notificationPermission")
     public void notificationPermission (@RequestBody UserNotificationDto dto){
 

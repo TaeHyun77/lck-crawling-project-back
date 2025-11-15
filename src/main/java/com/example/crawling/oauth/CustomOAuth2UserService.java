@@ -1,10 +1,13 @@
 package com.example.crawling.oauth;
 
+import com.example.crawling.exception.CustomException;
+import com.example.crawling.exception.ErrorCode;
 import com.example.crawling.user.User;
 import com.example.crawling.user.UserRequestDto;
 import com.example.crawling.user.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
@@ -25,37 +28,30 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         log.info("oAuth2User : " + oAuth2User);
 
         String registrationId = userRequest.getClientRegistration().getRegistrationId();
-        OAuth2Response oAuth2Response = null;
+        OAuth2Response oAuth2Response;
 
         if (registrationId.equals("google")) {
             oAuth2Response = new GoogleResponse(oAuth2User.getAttributes());
         } else {
+            oAuth2Response = null;
             return null;
         }
 
         String username = oAuth2Response.getProvider()+" "+oAuth2Response.getProviderId();
-        User findUser = userRepository.findByUsername(username);
 
-        User user;
+        User findUser = userRepository.findByUsername(username)
+                .orElseGet(() -> {
+                    User user = User.builder()
+                            .username(username)
+                            .name(oAuth2Response.getName())
+                            .email(oAuth2Response.getEmail())
+                            .role("ROLE_USER")
+                            .notificationPermission(false)
+                            .build();
 
-        if (findUser == null) {
+                    return userRepository.save(user);
+                });
 
-            UserRequestDto userRequestDto = UserRequestDto.builder()
-                    .username(username)
-                    .name(oAuth2Response.getName())
-                    .email(oAuth2Response.getEmail())
-                    .role("ROLE_USER")
-                    .notificationPermission(false)
-                    .build();
-
-            userRepository.save(userRequestDto.toUser());
-
-            return new CustomOAuth2User(userRequestDto.toUser(), oAuth2User.getAttributes());
-        } else {
-            log.info(username + ", 이미 가입한 사용자입니다.");
-            user = findUser;
-        }
-
-        return new CustomOAuth2User(user, oAuth2User.getAttributes());
+        return new CustomOAuth2User(findUser, oAuth2User.getAttributes());
     }
 }
