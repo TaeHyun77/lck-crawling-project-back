@@ -1,35 +1,31 @@
-package com.example.crawling.crawling;
+package com.example.crawling;
 
-import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import com.example.crawling.crawling.CrawlingService;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.scheduling.annotation.EnableAsync;
 
-@RequiredArgsConstructor
-@RequestMapping("/crawling")
-@RestController
-public class CrawlingController {
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
+@EnableAsync
+@SpringBootTest
+public class CrawlingTimeMeasure {
 
-    private final CrawlingService crawlingService;
+    @Autowired
+    private CrawlingService crawlingService;
 
-    @GetMapping("/async")
-    public void doAsyncCrawling() {
-        crawlingService.asyncCrawling();
-    }
+    @Test
+    @DisplayName("비동기적 크롤링과 동기적 크롤링 시간 차이 체크 - 10회 반복")
+    public void crawlingTimeDiffAsyncAndSync() throws Exception {
 
-    @GetMapping("/sync")
-    public void doSyncCrawling() {
-        crawlingService.syncCrawling();
-    }
-
-    @GetMapping("/average/test")
-    public void test() {
         int repeat = 10;
 
         long asyncTotal = 0;
         long syncTotal = 0;
 
-        // ====== 비동기 테스트 ======
+        // 비동기 테스트
         for (int i = 0; i < repeat; i++) {
             long start = System.nanoTime();
             crawlingService.asyncCrawling().join();
@@ -39,7 +35,7 @@ public class CrawlingController {
             System.out.println("[Async " + (i + 1) + "회] " + (elapsed / 1_000_000) + "ms");
         }
 
-        // ====== 동기 테스트 ======
+        // 동기 테스트
         for (int i = 0; i < repeat; i++) {
             long start = System.nanoTime();
             crawlingService.syncCrawling();
