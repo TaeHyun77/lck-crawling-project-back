@@ -4,7 +4,8 @@
 
 사용자가 다른 일을 하더라도 경기 시작을 놓치지 않도록, 크롬 알림을 통해 경기 시작 전 알림을 받을 수 있도록 개발하였습니다.<br><br>
 
-개발 과정 블로그 : https://velog.io/@ayeah77/series/Lck-%EA%B2%BD%EA%B8%B0-%EC%A0%95%EB%B3%B4-%EC%A0%9C%EA%B3%B5-%ED%94%84%EB%A1%9C%EC%A0%9D%ED%8A%B8-%ED%81%AC%EB%A1%A4%EB%A7%81
+개발 과정 블로그<br>
+https://velog.io/@ayeah77/series/Lck-%EA%B2%BD%EA%B8%B0-%EC%A0%95%EB%B3%B4-%EC%A0%9C%EA%B3%B5-%ED%94%84%EB%A1%9C%EC%A0%9D%ED%8A%B8-%ED%81%AC%EB%A1%A4%EB%A7%81
 
 <br>
 
