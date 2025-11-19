@@ -17,7 +17,7 @@ https://velog.io/@ayeah77/series/Lck-%EA%B2%BD%EA%B8%B0-%EC%A0%95%EB%B3%B4-%EC%A
   
 - DataBase : MySQL
   
-- ETC : Firebase<br><br>
+- ETC : Google Firebase<br><br>
 
 ### 기능
 ---
