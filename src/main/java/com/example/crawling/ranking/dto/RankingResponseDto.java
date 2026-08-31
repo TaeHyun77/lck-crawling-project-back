@@ -1,4 +1,4 @@
-package com.example.crawling.ranking;
+package com.example.crawling.ranking.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

@@ -18,60 +18,35 @@ import java.util.List;
 @Slf4j
 @Service
 public class UserService {
-
     private final JwtUtil jwtUtil;
     private final UserRepository userRepository;
 
-    /*
-    * 특정 사용자 정보 조회
-    * */
-    public ResponseEntity<?> userInfo(String token) {
-
-        try {
-
-            if (jwtUtil.isExpired(token)) {
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("UNAUTHORIZED");
-            }
-
-            String username = jwtUtil.getUsername(token);
-            String role = jwtUtil.getRole(token);
-
-            User user = userRepository.findByUsername(username)
-                    .orElseThrow(() -> new CustomException(HttpStatus.BAD_REQUEST, ErrorCode.NOT_FOUND_USER));
-
-            String name = user.getName();
-            String email = user.getEmail();
-
-            List<String> teamNames = user.getUserTeamMap().stream()
-                    .map(userTeamMap -> userTeamMap.getTeam().getTeamName())
-                    .toList();
-
-            boolean notificationPermission = user.isNotificationPermission();
-
-            UserResponseDto info = UserResponseDto.of(username, role, name, email, teamNames, notificationPermission);
-
-            return new ResponseEntity<>(info, HttpStatus.OK);
-        } catch (Exception e) {
-            return new ResponseEntity<>("UNAUTHORIZED", HttpStatus.UNAUTHORIZED);
+    // 특정 사용자 정보 조회
+    public UserResponseDto userInfo(String token) {
+        if (jwtUtil.isExpired(token)) {
+            throw new CustomException(HttpStatus.UNAUTHORIZED, ErrorCode.EXPIRED_TOKEN);
         }
+        String username = jwtUtil.getUsername(token);
+        String role = jwtUtil.getRole(token);
+
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new CustomException(HttpStatus.BAD_REQUEST, ErrorCode.NOT_FOUND_USER));
+
+        return UserResponseDto.of(username, role, user.getName(), user.getEmail(),
+                List.copyOf(user.getPreferredTeams()), user.isNotificationPermission());
     }
 
-    /*
-    * 사용자 알림 허용 여부 변경
-    * */
+    // 사용자 알림 허용 여부 변경
     public void notificationPermission(UserNotificationDto dto) {
-
         User user = userRepository.findByEmail(dto.getEmail())
                 .orElseThrow(() -> new CustomException(HttpStatus.BAD_REQUEST, ErrorCode.NOT_FOUND_USER));
 
-        user.setNotificationPermission(dto.isNotificationPermission());
+        user.updateNotificationPermission(dto.isNotificationPermission());
 
         userRepository.save(user);
-
     }
 
     public ResponseEntity<String> googleLogout(HttpServletRequest request, HttpServletResponse response) {
-
         HttpSession session = request.getSession(false);
         if (session != null) {
             session.invalidate();

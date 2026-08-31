@@ -7,32 +7,31 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-@Table(name = "ranking")
-@AllArgsConstructor
-@NoArgsConstructor
-@Getter
 @Entity
+@Table(name = "ranking")
+@Getter
+@NoArgsConstructor
+@AllArgsConstructor
 public class Ranking extends BaseTime {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String matchGroup;
+    private String matchGroup; // 그룹
 
-    private int teamRank;
+    private int teamRank; // 순위
 
-    private String img;
+    private String img; // 팀 로고 이미지
 
-    private String teamName;
+    private String teamName; // 팀명
 
-    private int winCnt;
+    private int winCnt; // 승리 수
 
-    private int loseCnt;
+    private int loseCnt; // 패배 수
 
-    private double winRate;
+    private double winRate; // 승률
 
-    private int pointDiff;
+    private int pointDiff; // 득싪 차
 
     @Builder
     public Ranking(String matchGroup, int teamRank, String img, String teamName, int winCnt, int loseCnt, double winRate, int pointDiff) {

@@ -5,30 +5,31 @@ import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import java.time.LocalDate;
 
-@NoArgsConstructor
-@Getter
-@Table(name="match_schedule")
 @Entity
+@Table(name="match_schedule")
+@Getter
+@NoArgsConstructor
 public class MatchSchedule extends BaseTime {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private int month;
+    private int month; // 월
 
-    private String matchDate;
+    private LocalDate matchDate; // 일정 날짜
 
-    private String startTime;
+    private String startTime; // 시작 시간
 
     private String team1;
 
     private String team2;
 
-    private String matchStatus;
+    private String matchStatus; // 경기 상태 ( 종료, 예정 .. )
 
-    private String stageType;
+    private String stageType; // 경기 종류
 
     private String teamScore1;
 
@@ -39,7 +40,7 @@ public class MatchSchedule extends BaseTime {
     private String teamImg2;
 
     @Builder
-    public MatchSchedule(int month, String matchDate, String startTime, String team1, String team2, String matchStatus, String stageType, String teamScore1, String teamScore2, String teamImg1, String teamImg2) {
+    public MatchSchedule(int month, LocalDate matchDate, String startTime, String team1, String team2, String matchStatus, String stageType, String teamScore1, String teamScore2, String teamImg1, String teamImg2) {
         this.month = month;
         this.matchDate = matchDate;
         this.startTime = startTime;

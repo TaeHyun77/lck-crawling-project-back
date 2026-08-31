@@ -1,6 +1,5 @@
-package com.example.crawling.schedule;
+package com.example.crawling.schedule.dto;
 
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 

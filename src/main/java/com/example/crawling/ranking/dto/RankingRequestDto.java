@@ -1,13 +1,11 @@
-package com.example.crawling.ranking;
+package com.example.crawling.ranking.dto;
 
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @NoArgsConstructor
 @Getter
 public class RankingRequestDto {
-
     private int teamRank;
 
     private String img;
