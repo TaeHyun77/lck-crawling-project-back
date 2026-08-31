@@ -5,30 +5,32 @@ import com.example.crawling.exception.CustomException;
 import com.example.crawling.exception.ErrorCode;
 import com.example.crawling.ranking.RankingService;
 import com.example.crawling.schedule.MatchScheduleService;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.openqa.selenium.WebDriver;
-import org.springframework.context.annotation.Configuration;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
-import org.springframework.scheduling.annotation.Async;
-import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
-import java.util.concurrent.Executors;
 
 @Slf4j
-@RequiredArgsConstructor
-
 @Service
 public class CrawlingService {
 
     private final MatchScheduleService matchScheduleService;
     private final RankingService rankingService;
+    private final Executor crawlingExecutor;
 
+    public CrawlingService(
+            MatchScheduleService matchScheduleService,
+            RankingService rankingService,
+            @Qualifier("crawlingExecutor") Executor crawlingExecutor
+    ) {
+        this.matchScheduleService = matchScheduleService;
+        this.rankingService = rankingService;
+        this.crawlingExecutor = crawlingExecutor;
+    }
 
     public CompletableFuture<Void> crawlSchedulesAsync() {
         return CompletableFuture.runAsync(() -> {
@@ -43,7 +45,7 @@ public class CrawlingService {
             } finally {
                 localDriver.quit();
             }
-        });
+        }, crawlingExecutor);
     }
 
     public CompletableFuture<Void> crawlRankingAsync() {
@@ -59,7 +61,7 @@ public class CrawlingService {
             } finally {
                 localDriver.quit();
             }
-        });
+        }, crawlingExecutor);
     }
 
     // 비동기적으로 실행한 크롤링
@@ -67,12 +69,7 @@ public class CrawlingService {
         return CompletableFuture.allOf(
                 crawlSchedulesAsync(),
                 crawlRankingAsync()
-        ).handle((res, ex) -> {
-            if(ex != null) {
-                log.error("크롤링 실패", ex);
-            }
-            return null;
-        });
+        );
     }
 
     // 동기적으로 실행한 크롤링
