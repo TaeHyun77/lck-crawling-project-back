@@ -23,6 +23,8 @@ public enum ErrorCode {
 
     EXPIRED_TOKEN("EXPIRED_TOKEN", "토큰이 만료되었습니다."),
 
+    INVALID_TOKEN("INVALID_TOKEN", "유효한 토큰이 아닙니다."),
+
     INVALID_REFRESH_TOKEN("INVALID_REFRESH_TOKEN", "유효한 refresh 토큰이 아닙니다."),
 
     NOT_FOUND_USER("NOT_FOUND_USER", "유저를 찾을 수 없습니다."),

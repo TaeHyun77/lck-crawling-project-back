@@ -1,4 +1,4 @@
-package com.example.crawling.schedule;
+package com.example.crawling.schedule.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

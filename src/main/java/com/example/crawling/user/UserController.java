@@ -1,11 +1,9 @@
 package com.example.crawling.user;
 
-import com.example.crawling.jwt.JwtUtil;
-import com.example.crawling.oauth.CustomOAuth2User;
-import jakarta.servlet.http.Cookie;
+import com.example.crawling.exception.CustomException;
+import com.example.crawling.exception.ErrorCode;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -15,45 +13,32 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 @Slf4j
 @RequiredArgsConstructor
 @RestController
 public class UserController {
-
     private final UserService userService;
 
-    /*
-    * 특정 유저 정보 조회
-    * */
+    // 특정 유저 정보 조회
     @GetMapping("/info")
-    public ResponseEntity<?> userInfo(HttpServletRequest request) {
-
+    public ResponseEntity<UserResponseDto> userInfo(HttpServletRequest request) {
         String authorizationHeader = request.getHeader("authorization");
 
         if (authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")) {
-            return new ResponseEntity<>("UNAUTHORIZED", HttpStatus.UNAUTHORIZED);
+            throw new CustomException(HttpStatus.UNAUTHORIZED, ErrorCode.INVALID_TOKEN);
         }
 
         String token = authorizationHeader.substring(7);
 
-        return userService.userInfo(token);
+        return ResponseEntity.ok(userService.userInfo(token));
     }
 
-    /*
-    * 사용자 알림 허용 여부 변경
-    * */
+    // 사용자 알림 허용 여부 변경
     @PostMapping("/user/notificationPermission")
     public void notificationPermission (@RequestBody UserNotificationDto dto){
-
-        log.info(dto.getEmail());
-        log.info(String.valueOf(dto.isNotificationPermission()));
-
         userService.notificationPermission(dto);
-
     }
 
     @GetMapping("/googleLogin")
@@ -66,8 +51,6 @@ public class UserController {
 
     @PostMapping("/googleLogout")
     public ResponseEntity<String> googleLogout(HttpServletRequest request, HttpServletResponse response) {
-
         return userService.googleLogout(request, response);
-
     }
 }

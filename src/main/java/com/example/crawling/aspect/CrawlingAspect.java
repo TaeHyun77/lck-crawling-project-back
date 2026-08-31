@@ -10,22 +10,17 @@ import org.springframework.stereotype.Component;
 @Aspect
 @Component
 public class CrawlingAspect { // 크롤링 시간 측정
-
     @Around("@annotation(org.springframework.scheduling.annotation.Scheduled)")
     public Object measureExecutionTime(ProceedingJoinPoint joinPoint) throws Throwable {
-
         log.info("=== 크롤링 시작 ===");
-
         long start = System.nanoTime();
         Object result = null;
 
         try {
             result = joinPoint.proceed();
-
             return result;
         } catch (Exception e) {
             log.error("크롤링 중 오류 발생: {}", e.getMessage(), e);
-
             throw e;
         } finally {
             long elapsed = System.nanoTime() - start;

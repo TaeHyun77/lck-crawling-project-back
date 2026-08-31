@@ -18,6 +18,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
+import java.util.Locale;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -35,7 +36,7 @@ public class FcmService {
         User user = userRepository.findByEmail(dto.getEmail())
                 .orElseThrow(() -> new CustomException(HttpStatus.BAD_REQUEST, ErrorCode.NOT_FOUND_USER));
 
-        user.setFcmToken(dto.getFcmToken());
+        user.updateFcmToken(dto.getFcmToken());
         userRepository.save(user);
     }
 
@@ -104,9 +105,7 @@ public class FcmService {
      * 사용자의 선호하는 팀 이름 목록 추출
      */
     private List<String> getUserTeamNames(User user) {
-        return user.getUserTeamMap().stream()
-                .map(userTeamMap -> userTeamMap.getTeam().getTeamName())
-                .toList();
+        return new ArrayList<>(user.getPreferredTeams());
     }
 
     /**
@@ -119,21 +118,11 @@ public class FcmService {
                 .toList();
     }
 
-    /**
-     * 경기 일정이 지정된 시간 범위에 포함되는지 확인
-     */
+    // matchDate가 LocalDate로 변경되어 문자열 파싱 불필요
     private boolean isMatchWithinTimeRange(MatchSchedule match, LocalDateTime now, LocalDateTime plusHour) {
         try {
-            String dateStr = match.getMatchDate()
-                    .replaceAll("[^0-9]", "-")
-                    .replaceAll("-+", "-")
-                    .replaceAll("-$", "");
-
-            LocalDate matchDate = LocalDate.parse(now.getYear() + "-" + dateStr,
-                    DateTimeFormatter.ofPattern("yyyy-MM-dd"));
             LocalTime matchTime = LocalTime.parse(match.getStartTime(), DateTimeFormatter.ofPattern("HH:mm"));
-            LocalDateTime matchDateTime = LocalDateTime.of(matchDate, matchTime);
-
+            LocalDateTime matchDateTime = LocalDateTime.of(match.getMatchDate(), matchTime);
             return !matchDateTime.isBefore(now) && matchDateTime.isBefore(plusHour);
         } catch (Exception e) {
             log.error("날짜 변환 실패! 원본 데이터: {} {}", match.getMatchDate(), match.getStartTime(), e);
@@ -144,10 +133,14 @@ public class FcmService {
     /**
      * 경기 정보를 문자열로 변환 : 02월 01일 (토) → 02-01
      */
+    private static final DateTimeFormatter MATCH_DATE_FORMATTER =
+            DateTimeFormatter.ofPattern("MM월 dd일 (E)", Locale.KOREAN);
+
     private String buildMatchDetails(List<MatchSchedule> matches) {
         return matches.stream()
                 .map(match -> String.format("%s %s - %s vs %s",
-                        match.getMatchDate(), match.getStartTime(), match.getTeam1(), match.getTeam2()))
+                        match.getMatchDate().format(MATCH_DATE_FORMATTER),
+                        match.getStartTime(), match.getTeam1(), match.getTeam2()))
                 .collect(Collectors.joining("\n"));
     }
 
@@ -182,7 +175,7 @@ public class FcmService {
             if (e.getMessagingErrorCode() == MessagingErrorCode.UNREGISTERED) {
                 log.warn("{}님의 유효하지 않은 토큰 발견 ( 삭제하였습니다. )", user.getEmail());
 
-                user.setFcmToken("deleted");
+                user.updateFcmToken("deleted");
                 userRepository.save(user);
             } else {
                 results.add(user.getId() + "님에게 알림 발송을 실패하였습니다. ");

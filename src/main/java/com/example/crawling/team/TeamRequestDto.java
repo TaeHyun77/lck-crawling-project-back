@@ -8,7 +8,6 @@ import java.util.List;
 @Getter
 @NoArgsConstructor
 public class TeamRequestDto {
-
     private String username;
     private List<String> selectedTeams;
 }

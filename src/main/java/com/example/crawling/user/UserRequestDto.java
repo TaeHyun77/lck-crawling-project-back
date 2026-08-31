@@ -9,7 +9,6 @@ import java.util.List;
 @Getter
 @Setter
 public class UserRequestDto {
-
     private String username;
     private String name;
     private String email;
