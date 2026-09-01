@@ -1,8 +1,8 @@
 package com.example.crawling.crawling;
 
-import com.example.crawling.exception.CustomException;
-import com.example.crawling.exception.ErrorCode;
-import com.example.crawling.schedule.MatchScheduleRepository;
+import com.example.crawling.global.exception.CustomException;
+import com.example.crawling.global.exception.ErrorCode;
+import com.example.crawling.schedule.domain.MatchScheduleRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;

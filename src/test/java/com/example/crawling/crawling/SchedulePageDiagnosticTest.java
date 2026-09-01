@@ -1,6 +1,6 @@
 package com.example.crawling.crawling;
 
-import com.example.crawling.config.WebDriverFactory;
+import com.example.crawling.global.config.WebDriverFactory;
 import org.junit.jupiter.api.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
