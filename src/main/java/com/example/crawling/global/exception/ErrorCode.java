@@ -1,0 +1,39 @@
+package com.example.crawling.global.exception;
+
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+
+@Getter
+@RequiredArgsConstructor
+public enum ErrorCode {
+
+    UNKNOWN("000_UNKNOWN", "알 수 없는 에러가 발생했습니다."),
+
+    FAIL_TO_CRAWLING_LCK_DATA("FAIL_TO_CRAWLING_LCK_DATA", "LCK 일정 데이터 크롤링에 실패하였습니다."),
+
+    FAIL_TO_CRAWLING_RANKING_DATA("FAIL_TO_CRAWLING_RANKING_DATA", "LCK 순위 데이터 크롤링에 실패하였습니다."),
+
+    FAIL_TO_CRAWLING_SCHEDULING("FAIL_TO_CRAWLING_SCHEDULING", "스케줄링 크롤링 실패"),
+
+    FAIL_TO_SETTING_DRIVER("FAIL_TO_SETTING_DRIVER", "드라이버 세팅을 실패하였습니다."),
+
+    EXPIRED_TOKEN("EXPIRED_TOKEN", "토큰이 만료되었습니다."),
+
+    INVALID_TOKEN("INVALID_TOKEN", "유효한 토큰이 아닙니다."),
+
+    INVALID_REFRESH_TOKEN("INVALID_REFRESH_TOKEN", "유효한 refresh 토큰이 아닙니다."),
+
+    NOT_FOUND_USER("NOT_FOUND_USER", "유저를 찾을 수 없습니다."),
+
+    NOT_FOUND_TEAM("NOT_FOUND_TEAM", "팀을 찾을 수 없습니다."),
+
+    NOT_FOUND_FCMTOKEN("NOT_FOUND_FCMTOKEN", "FCM 토큰을 찾을 수 없습니다."),
+
+    ERROR_TO_PARSING_MONTH("ERROR_TO_PARSING_MONTH", "월 데이터 파싱 중 오류 발생"),
+
+    OPTIMISTICLOCKING("OPTIMISTICLOCKING", "낙관적 락 발생");
+
+    private final String errorCode;
+
+    private final String message;
+}

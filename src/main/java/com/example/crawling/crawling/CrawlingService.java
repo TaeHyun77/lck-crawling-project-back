@@ -1,10 +1,10 @@
 package com.example.crawling.crawling;
 
-import com.example.crawling.config.WebDriverFactory;
-import com.example.crawling.exception.CustomException;
-import com.example.crawling.exception.ErrorCode;
-import com.example.crawling.ranking.RankingService;
-import com.example.crawling.schedule.MatchScheduleService;
+import com.example.crawling.global.config.WebDriverFactory;
+import com.example.crawling.global.exception.CustomException;
+import com.example.crawling.global.exception.ErrorCode;
+import com.example.crawling.ranking.application.RankingService;
+import com.example.crawling.schedule.application.MatchScheduleService;
 import lombok.extern.slf4j.Slf4j;
 import org.openqa.selenium.WebDriver;
 import org.springframework.beans.factory.annotation.Qualifier;
